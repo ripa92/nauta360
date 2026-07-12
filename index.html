@@ -70,5 +70,15 @@
 
     <!-- Vinculamos el cerebro del proyecto: JavaScript con atributo defer para asegurar carga -->
     <script src="js/app.js" defer></script>
+    <script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'es', 
+    includedLanguages: 'en', // Solo permitimos traducir al Inglés
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
