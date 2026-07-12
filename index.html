@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuiaNauta - Tu Guía Turístico QR</title>
+    <!-- Vinculamos los estilos CSS -->
+    <link rel="stylesheet" href="css/estilos.css">
+    <!-- Iconos corregidos y ligeros desde CDN estable -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 1. ENCABEZADO (Header) -->
+    <header>
+        <div class="logo">
+            <h1>NAUTA<span>360</span></h1>
+        </div>
+        <div class="idioma">
+            <button id="btn-idioma">🇺🇸 English</button>
+        </div>
+    </header>
+
+    <!-- 2. CONTENEDOR HERO (Imagen del Monumento) -->
+    <section class="hero-seccion">
+        <img id="monumento-imagen" src="assets/imagenes/placeholder.jpg" alt="Cargando monumento...">
+        <div class="hero-overlay">
+            <h2 id="monumento-titulo">Cargando Nombre...</h2>
+        </div>
+    </section>
+
+    <!-- 3. AUDIO-GUÍA (Acceso Rápido) -->
+    <section class="audio-seccion">
+        <div class="audio-tarjeta">
+            <p><i class="fas fa-volume-up"></i> Escucha la historia en audio:</p>
+            <audio id="monumento-audio" controls>
+                Tu navegador no soporta elementos de audio.
+            </audio>
+        </div>
+    </section>
+
+    <!-- 4. INFORMACIÓN HISTÓRICA (Texto con Botón de Audio-Lectura) -->
+    <main class="info-seccion">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gris-suave); padding-bottom: 6px; margin-bottom: 10px;">
+            <h3 style="margin: 0; border: none; padding: 0;">Reseña Histórica</h3>
+            <!-- Nuevo botón de Play con ícono de parlante -->
+            <button id="btn-leer-texto" style="background-color: var(--verde-selva); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fas fa-volume-up"></i> Escuchar texto
+            </button>
+        </div>
+        <p id="monumento-descripcion">
+            Buscando información del lugar... Por favor, asegúrate de haber escaneado un código QR válido de la ruta turística de Nauta.
+        </p>
+    </main>
+
+    <!-- 5. CHATBOT CON INTELIGENCIA ARTIFICIAL -->
+    <section class="ia-chat-contenedor">
+        <div class="chat-header">
+            <h4>💬 Historiador Virtual IA</h4>
+        </div>
+        <div class="chat-historial" id="chat-historial">
+            <p class="bot-mensaje">¡Hola! Soy tu guía de IA. Puedes hacerme cualquier pregunta sobre este monumento histórico.</p>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-pregunta" placeholder="¿En qué año se construyó esto?...">
+            <button id="btn-enviar-chat">Enviar</button>
+        </div>
+    </section>
+
+    <!-- Vinculamos el cerebro del proyecto: JavaScript con atributo defer para asegurar carga -->
+    <script src="js/app.js" defer></script>
+</body>
+</html>
