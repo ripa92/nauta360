@@ -203,3 +203,44 @@ function hablarReseñaHistorica() {
     // Ejecutar la voz
     window.speechSynthesis.speak(lectura);
 }
+
+// Variable para controlar si el texto está en inglés o español
+let enIngles = false;
+let textoOriginalEs = ""; // Guardará el texto en español por si el turista quiere regresar
+
+document.getElementById("btn-idioma").addEventListener("click", async () => {
+    const descripcionElemento = document.getElementById("monumento-descripcion");
+    const btnIdioma = document.getElementById("btn-idioma");
+
+    // Si el texto original está vacío, guardamos lo que vino de Google Sheets
+    if (!textoOriginalEs) {
+        textoOriginalEs = descripcionElemento.innerText;
+    }
+
+    // Cambiamos el estado
+    enIngles = !enIngles;
+
+    if (enIngles) {
+        btnIdioma.innerText = "🇵🇪 Español";
+        descripcionElemento.innerText = "Translating / Traduciendo...";
+
+        try {
+            // Usamos un motor de traducción libre, rápido y gratuito en la nube
+            const respuesta = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&q=${encodeURIComponent(textoOriginalEs)}`);
+            const datos = await respuesta.json();
+            
+            // Unimos los fragmentos traducidos
+            const textoTraducido = datos[0].map(item => item[0]).join("");
+            descripcionElemento.innerText = textoTraducido;
+        } catch (error) {
+            console.error("Error al traducir:", error);
+            descripcionElemento.innerText = textoOriginalEs; // Si falla, regresa al español
+            enIngles = false;
+            btnIdioma.innerText = "🇺🇸 English";
+        }
+    } else {
+        // Si vuelve a presionar, restauramos el texto original en español al instante
+        btnIdioma.innerText = "🇺🇸 English";
+        descripcionElemento.innerText = textoOriginalEs;
+    }
+});
