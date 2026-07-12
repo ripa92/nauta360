@@ -240,6 +240,13 @@ header h1 span {
 #btn-enviar-chat:hover {
     background-color: #D97706;
 }
+#monumento-imagen {
+    width: 100%;          /* Obliga a la imagen a ocupar todo el ancho disponible */
+    height: 320px;        /* Define una altura fija ideal para pantallas de celulares */
+    object-fit: cover;    /* ¡Aquí está la magia! Recorta y adapta la imagen proporcionalmente sin deformarla */
+    object-position: center; /* Asegura que el enfoque de la foto siempre sea la parte del centro */
+    display: block;
+}
 
 /* 7. OPTIMIZACIONES PARA PANTALLAS GRANDES (PC / LAPTOP) */
 @media (min-width: 768px) {
