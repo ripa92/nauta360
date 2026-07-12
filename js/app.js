@@ -28,6 +28,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Escuchar el clic del nuevo botón para leer el texto
     document.getElementById("btn-leer-texto").addEventListener("click", hablarReseñaHistorica);
+   // Evento para activar la traducción automática de Google
+    document.getElementById("btn-idioma").addEventListener("click", () => {
+        // Buscamos el selector interno que genera Google Translate
+        const googleSelect = document.querySelector('.goog-te-combo');
+        
+        if (googleSelect) {
+            // Si la página está en español, la pasamos a inglés, y viceversa
+            if (googleSelect.value === 'en') {
+                googleSelect.value = 'es'; // Regresa a Español
+            } else {
+                googleSelect.value = 'en'; // Cambia a Inglés
+            }
+            
+            // Le avisamos al navegador que hubo un cambio para que ejecute la traducción
+            googleSelect.dispatchEvent(new Event('change'));
+        } else {
+            alert("El motor de traducción está cargando, por favor intenta en un segundo.");
+        }
+    });
 });
 
 // 2. CONEXIÓN Y FILTRADO: Google Sheets
