@@ -17,8 +17,12 @@
             <h1>NAUTA<span>360</span></h1>
         </div>
         <div class="idioma">
-            <!-- Reemplazo del botón por el contenedor oficial de Google Translate -->
-            <div id="google_translate_element" style="display: inline-block; vertical-align: middle;"></div>
+            <!-- 1. Tu botón original (Volvió a aparecer y con estilo) -->
+            <button id="btn-idioma" style="background: transparent; color: white; border: 1px solid white; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer;">
+            🇺🇸 English / 🇵🇪 ESP</button>
+
+<!-- 2. El traductor de Google (Lo dejamos completamente oculto para que no estorbe) -->
+<div id="google_translate_element" style="display: none;"></div>
         </div>
     </header>
 
@@ -70,11 +74,12 @@
 
     <!-- Vinculamos el cerebro del proyecto: JavaScript con atributo defer para asegurar carga -->
     <script src="js/app.js" defer></script>
-    <script type="text/javascript">
+   <script type="text/javascript">
+// Inicializa el traductor de Google en modo silencioso
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'es', 
-    includedLanguages: 'en', // Solo permitimos traducir al Inglés
+    includedLanguages: 'en', 
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE
   }, 'google_translate_element');
 }
