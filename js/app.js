@@ -9,7 +9,7 @@ const OPENAI_API_KEY = 'sk-proj-gU3D7z2IyAGt48JfM0vKioCvA2azABcXGkze3yhM7wIh8YNt
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 // Lista de los monumentos oficiales (IDs normalizados en minúsculas y sin espacios)
-const RUTA_MONUMENTOS = ['plaza-armas', 'sapi-sapi', 'mercado-central'];
+const RUTA_MONUMENTOS = ['manuel', 'sapi', 'mercado-central'];
 
 // Diccionario con rutas peatonales exactas generadas en Google Maps para Nauta
 const MAPAS_RELEVANTES = {
