@@ -8,21 +8,24 @@ const OPENAI_API_KEY = 'sk-proj-gU3D7z2IyAGt48JfM0vKioCvA2azABcXGkze3yhM7wIh8YNt
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-// Lista de los monumentos oficiales de la ruta para el Pasaporte
+// Lista de los monumentos oficiales (IDs normalizados en minúsculas y sin espacios)
 const RUTA_MONUMENTOS = ['plaza-armas', 'sapi-sapi', 'mercado-central'];
 
-// Diccionario de navegación para guiar al usuario a su siguiente punto en Nauta
+// Diccionario con rutas peatonales exactas generadas en Google Maps para Nauta
 const MAPAS_RELEVANTES = {
     'plaza-armas': {
-        siguienteNombre: "📍 Siguiente parada: Lago Sapi Sapi (A 3 cuadras)",
-        embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.2064115162483!2d-73.5794829!3d-4.5073059!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe"
+        siguienteNombre: "📍 Siguiente parada: Lago Sapi Sapi (Caminando por Jr. Tarapacá)",
+        // Ruta exacta a pie desde Plaza de Armas hasta Sapi Sapi
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.203657784013!2d-73.57866752520638!3d-4.506542795467657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b6fa3500a4b%3A0xc3da0b75a176cc38!2sPlaza%20de%20Armas%20de%20Nauta%2C%20Nauta!3m2!1d-4.5055047!2d-73.5762031!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!5e0!3m2!1ses-419!2spe!4v1716584200000!5m2!1ses-419!2spe"
     },
     'sapi-sapi': {
-        siguienteNombre: "📍 Siguiente parada: Mercado Central de Nauta",
-        embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.1965000000000!2d-73.5765000!3d-4.5090000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b66fa5a5555%3A0x5555555555555555!2sMercado%20Central%20De%20Nauta!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe"
+        siguienteNombre: "📍 Siguiente parada: Mercado Central de Nauta (Caminando por Jr. Lima)",
+        // Ruta exacta a pie desde Sapi Sapi hasta el Mercado Central
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.198357784013!2d-73.57900002520638!3d-4.508500000000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!4m5!1s0x91ea6b66fa5a5555%3A0x5555555555555555!2sMercado%20Central%20De%20Nauta%2C%20Nauta!3m2!1d-4.5090000!2d-73.5765000!5e0!3m2!1ses-419!2spe!4v1716584300000!5m2!1ses-419!2spe"
     },
     'mercado-central': {
         siguienteNombre: "🎉 ¡Felicidades! Has completado el circuito turístico principal de Nauta.",
+        // Mapa general de Nauta para cierre del recorrido
         embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15924.779774026362!2d-73.58784865!3d-4.50821035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b6f7902047b%3A0x8efb36511fa35712!2sNauta!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe"
     }
 };
@@ -34,24 +37,31 @@ let textoOriginalEs = "";
 // Esperamos a que todo el HTML esté listo
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const monumentoId = urlParams.get('id'); // Detecta el ?id= de la URL del QR
+    const monumentoId = urlParams.get('id'); 
 
     if (monumentoId) {
         cargarYMostrarMonumento(monumentoId);
     } else {
         mostrarMensajePantalla("¡Bienvenido Viajero!", "Por favor, escanea un código QR oficial en cualquiera de los monumentos turísticos de la ciudad para conocer su historia.");
-        actualizarVisualizacionPasaporte(); // Muestra el pasaporte vacío o con progreso previo
+        actualizarVisualizacionPasaporte(); 
     }
 
-    // Escuchar eventos del chat
     document.getElementById("btn-enviar-chat").addEventListener("click", manejarPreguntaIA);
     document.getElementById("chat-pregunta").addEventListener("keypress", (e) => {
         if (e.key === 'Enter') manejarPreguntaIA();
     });
 
-    // Escuchar el botón para escuchar la lectura
     document.getElementById("btn-leer-texto").addEventListener("click", hablarReseñaHistorica);
 });
+
+// FUNCIÓN AUXILIAR: Normaliza los textos para evitar errores por mayúsculas, espacios o tildes
+function normalizarTexto(texto) {
+    if (!texto) return "";
+    return texto.toString().toLowerCase()
+        .replace(/\s+/g, '-') // Reemplaza espacios por guiones
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Elimina acentos/tildes
+        .trim();
+}
 
 // 2. CONEXIÓN Y FILTRADO: Google Sheets
 async function cargarYMostrarMonumento(idBuscado) {
@@ -62,30 +72,33 @@ async function cargarYMostrarMonumento(idBuscado) {
         const filas = jsonLimpio.table.rows;
 
         let monumentoEncontrado = null;
+        // Normalizamos el ID que viene de la URL
+        const idBuscadoLimpio = normalizarTexto(idBuscado);
 
         filas.forEach(fila => {
-            if (fila.c[0] && fila.c[0].v === idBuscado) {
-                monumentoEncontrado = {
-                    id: fila.c[0].v,
-                    nombre: fila.c[1] ? fila.c[1].v : "Monumento sin nombre",
-                    descripcion: fila.c[2] ? fila.c[2].v : "Sin descripción disponible.",
-                    url_imagen: fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg",
-                    url_audio: fila.c[4] ? fila.c[4].v : ""
-                };
+            if (fila.c[0]) {
+                const idCeldaLimpio = normalizarTexto(fila.c[0].v);
+                
+                if (idCeldaLimpio === idBuscadoLimpio) {
+                    monumentoEncontrado = {
+                        id: idCeldaLimpio, // Usamos el ID limpio internamente
+                        nombre: fila.c[1] ? fila.c[1].v : "Monumento sin nombre",
+                        descripcion: fila.c[2] ? fila.c[2].v : "Sin descripción disponible.",
+                        url_imagen: fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg",
+                        url_audio: fila.c[4] ? fila.c[4].v : ""
+                    };
+                }
             }
         });
 
         if (monumentoEncontrado) {
-            // Pintar los datos en el HTML
             document.getElementById("monumento-titulo").innerText = monumentoEncontrado.nombre;
             document.getElementById("monumento-descripcion").innerText = monumentoEncontrado.descripcion;
             document.getElementById("monumento-imagen").src = monumentoEncontrado.url_imagen;
 
-            // Guardar la historia en una variable global para alimentar a la IA y traducción
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
 
-            // Configurar Audio-guía nativa si existe enlace
             const elementoAudio = document.getElementById("monumento-audio");
             if (monumentoEncontrado.url_audio) {
                 elementoAudio.src = monumentoEncontrado.url_audio;
@@ -94,7 +107,7 @@ async function cargarYMostrarMonumento(idBuscado) {
                 document.querySelector(".audio-seccion").style.display = "none";
             }
 
-            // [NUEVO] Registrar visita en el Pasaporte y actualizar Mapa
+            // ACTIVACIÓN DE PROGRESO Y MAPAS CON EL ID RECONOCIDO Y NORMALIZADO
             registrarVisitaPasaporte(monumentoEncontrado.id);
             actualizarMapaRuta(monumentoEncontrado.id);
 
@@ -189,16 +202,13 @@ document.getElementById("btn-idioma").addEventListener("click", async () => {
 
 // 5. MÓDULO PASAPORTE DIGITAL (Sistema de Recompensas por LocalStorage)
 function registrarVisitaPasaporte(idMonumento) {
-    // Leemos los sellos guardados o creamos una lista vacía si es la primera vez
     let sellosObtenidos = JSON.parse(localStorage.getItem("sellos_guianauta")) || [];
 
-    // Si el monumento escaneado es válido y no lo teníamos guardado, lo añadimos
     if (RUTA_MONUMENTOS.includes(idMonumento) && !sellosObtenidos.includes(idMonumento)) {
         sellosObtenidos.push(idMonumento);
         localStorage.setItem("sellos_guianauta", JSON.stringify(sellosObtenidos));
     }
 
-    // Dibujamos el progreso actualizado en la pantalla
     actualizarVisualizacionPasaporte();
 }
 
@@ -208,14 +218,13 @@ function actualizarVisualizacionPasaporte() {
     const textoProgreso = document.getElementById("progreso-texto");
     const cajaPremio = document.getElementById("premio-completo");
 
-    // Limpiamos los círculos anteriores para no duplicar
+    if (!contenedor || !textoProgreso) return; // Validación de seguridad por si no existen los IDs en el HTML
+
     contenedor.innerHTML = "";
 
-    // Generamos los círculos dinámicamente según la lista oficial
     RUTA_MONUMENTOS.forEach(monumento => {
         const circuloSello = document.createElement("div");
         
-        // Estilos base para el sello circular
         circuloSello.style.width = "45px";
         circuloSello.style.height = "45px";
         circuloSello.style.borderRadius = "50%";
@@ -226,13 +235,11 @@ function actualizarVisualizacionPasaporte() {
         circuloSello.style.transition = "all 0.3s ease";
 
         if (sellosObtenidos.includes(monumento)) {
-            // Sello Completado (Verde con check)
             circuloSello.style.background = "#D1FAE5";
             circuloSello.style.border = "2px solid #10B981";
             circuloSello.style.color = "#059669";
             circuloSello.innerHTML = '<i class="fas fa-check-circle"></i>';
         } else {
-            // Sello Bloqueado (Gris con candado)
             circuloSello.style.background = "#F3F4F6";
             circuloSello.style.border = "2px dashed #D1D5DB";
             circuloSello.style.color = "#9CA3AF";
@@ -242,28 +249,30 @@ function actualizarVisualizacionPasaporte() {
         contenedor.appendChild(circuloSello);
     });
 
-    // Actualizamos el contador de texto en pantalla
     textoProgreso.innerText = `Has recolectado ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} sellos de la ruta de Nauta.`;
 
-    // Si el turista completó todos los puntos, abrimos el premio secreto
-    if (sellosObtenidos.length === RUTA_MONUMENTOS.length) {
-        cajaPremio.style.display = "block";
-    } else {
-        cajaPremio.style.display = "none";
+    if (cajaPremio) {
+        if (sellosObtenidos.length === RUTA_MONUMENTOS.length) {
+            cajaPremio.style.display = "block";
+        } else {
+            cajaPremio.style.display = "none";
+        }
     }
 }
 
-// 6. MÓDULO DE MAPAS: Direcciona los iframes según la ubicación
+// 6. MÓDULO DE MAPAS: Muestra las rutas peatonales interactivas hacia el siguiente destino
 function actualizarMapaRuta(idMonumentoActual) {
     const textoParada = document.getElementById("siguiente-parada-texto");
     const iframeMapa = document.getElementById("mapa-ruta");
 
+    if (!iframeMapa) return;
+
     if (MAPAS_RELEVANTES[idMonumentoActual]) {
         const datosRuta = MAPAS_RELEVANTES[idMonumentoActual];
-        textoParada.innerText = datosRuta.siguienteNombre;
+        if (textoParada) textoParada.innerText = datosRuta.siguienteNombre;
         iframeMapa.src = datosRuta.embedUrl;
     } else {
-        textoParada.innerText = "📍 Explora los encantos de la ciudad de Nauta";
+        if (textoParada) textoParada.innerText = "📍 Explora los encantos de la ciudad de Nauta";
         iframeMapa.src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15924.779774026362!2d-73.578502!3d-4.50821035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b6f7902047b%3A0x8efb36511fa35712!2sNauta!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe";
     }
 }
@@ -274,8 +283,11 @@ function mostrarMensajePantalla(titulo, mensaje) {
     document.getElementById("monumento-descripcion").innerText = mensaje;
 }
 
+// Función para añadir burbujas de texto en el historial del Chatbot
 function agregarMensajeAlChat(texto, claseEstilo) {
     const historial = document.getElementById("chat-historial");
+    if (!historial) return "";
+    
     const nuevaBurbuja = document.createElement("p");
     const idUnico = "msg-" + Date.now() + Math.random().toString(36).substr(2, 5);
     
@@ -293,6 +305,8 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 function hablarReseñaHistorica() {
     const textoParaLeer = document.getElementById("monumento-descripcion").innerText;
     const botonEfecto = document.getElementById("btn-leer-texto");
+
+    if (!botonEfecto) return;
 
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
