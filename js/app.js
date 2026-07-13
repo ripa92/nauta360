@@ -202,14 +202,100 @@ document.getElementById("btn-idioma").addEventListener("click", async () => {
 
 // 5. MÓDULO PASAPORTE DIGITAL (Sistema de Recompensas por LocalStorage)
 function registrarVisitaPasaporte(idMonumento) {
-    let sellosObtenidos = JSON.parse(localStorage.getItem("sellos_guianauta")) || [];
+    // 1. Intentamos leer lo que ya está guardado en el teléfono
+    let datosGuardados = localStorage.getItem("sellos_guianauta");
+    let sellosObtenidos = [];
 
-    if (RUTA_MONUMENTOS.includes(idMonumento) && !sellosObtenidos.includes(idMonumento)) {
-        sellosObtenidos.push(idMonumento);
-        localStorage.setItem("sellos_guianauta", JSON.stringify(sellosObtenidos));
+    // 2. Si ya había datos reales, los convertimos en lista; si no, empezamos vacíos
+    if (datosGuardados) {
+        try {
+            sellosObtenidos = JSON.parse(datosGuardados);
+            // Si por algún error no se descargó como lista, lo forzamos a ser una
+            if (!Array.isArray(sellosObtenidos)) {
+                sellosObtenidos = [];
+            }
+        } catch (e) {
+            console.error("Error al leer almacenamiento previo:", e);
+            sellosObtenidos = [];
+        }
     }
 
+    // 3. Verificamos si el monumento es válido y si NO ha sido visitado antes
+    if (RUTA_MONUMENTOS.includes(idMonumento)) {
+        if (!sellosObtenidos.includes(idMonumento)) {
+            sellosObtenidos.push(idMonumento); // Lo agregamos a la lista existente
+            localStorage.setItem("sellos_guianauta", JSON.stringify(sellosObtenidos)); // Guardamos la lista actualizada
+            console.log("¡Sello acumulado con éxito! Lista actual:", sellosObtenidos);
+        } else {
+            console.log("Este monumento ya había sido escaneado antes.");
+        }
+    }
+
+    // 4. Dibujamos el progreso actualizado en la pantalla
     actualizarVisualizacionPasaporte();
+}
+
+function actualizarVisualizacionPasaporte() {
+    let datosGuardados = localStorage.getItem("sellos_guianauta");
+    let sellosObtenidos = [];
+
+    if (datosGuardados) {
+        try {
+            sellosObtenidos = JSON.parse(datosGuardados);
+            if (!Array.isArray(sellosObtenidos)) sellosObtenidos = [];
+        } catch (e) {
+            sellosObtenidos = [];
+        }
+    }
+
+    const contenedor = document.getElementById("contenedor-sellos");
+    const textoProgreso = document.getElementById("progreso-texto");
+    const cajaPremio = document.getElementById("premio-completo");
+
+    if (!contenedor || !textoProgreso) return; 
+
+    contenedor.innerHTML = "";
+
+    // Dibujamos cada candado o check analizando la lista acumulada
+    RUTA_MONUMENTOS.forEach(monumento => {
+        const circuloSello = document.createElement("div");
+        
+        circuloSello.style.width = "45px";
+        circuloSello.style.height = "45px";
+        circuloSello.style.borderRadius = "50%";
+        circuloSello.style.display = "flex";
+        circuloSello.style.alignItems = "center";
+        circuloSello.style.justifyContent = "center";
+        circuloSello.style.fontSize = "18px";
+        circuloSello.style.transition = "all 0.3s ease";
+
+        if (sellosObtenidos.includes(monumento)) {
+            // Sello conseguido
+            circuloSello.style.background = "#D1FAE5";
+            circuloSello.style.border = "2px solid #10B981";
+            circuloSello.style.color = "#059669";
+            circuloSello.innerHTML = '<i class="fas fa-check-circle"></i>';
+        } else {
+            // Sello bloqueado
+            circuloSello.style.background = "#F3F4F6";
+            circuloSello.style.border = "2px dashed #D1D5DB";
+            circuloSello.style.color = "#9CA3AF";
+            circuloSello.innerHTML = '<i class="fas fa-lock"></i>';
+        }
+
+        contenedor.appendChild(circuloSello);
+    });
+
+    // Cambia el contador dinámicamente según el tamaño de la lista acumulada
+    textoProgreso.innerText = `Has recolectado ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} sellos de la ruta de Nauta.`;
+
+    if (cajaPremio) {
+        if (sellosObtenidos.length === RUTA_MONUMENTOS.length) {
+            cajaPremio.style.display = "block";
+        } else {
+            cajaPremio.style.display = "none";
+        }
+    }
 }
 
 function actualizarVisualizacionPasaporte() {
