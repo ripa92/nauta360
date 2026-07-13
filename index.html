@@ -17,9 +17,10 @@
             <h1>NAUTA<span>360</span></h1>
         </div>
         <div class="idioma">
-            <!-- 1. Tu botón original (Volvió a aparecer y con estilo) -->
+            <!-- Tu botón original con traductor dinámico -->
             <button id="btn-idioma" style="background: transparent; color: white; border: 1px solid white; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer;">
-            🇺🇸 English / 🇵🇪 ESP</button>
+                🇺🇸 English / 🇵🇪 ESP
+            </button>
         </div>
     </header>
 
@@ -55,27 +56,45 @@
         </p>
     </main>
 
-    <!-- 4.C SECCIÓN: SIGUIENTE PARADA Y MAPA DE LA RUTA -->
-<section class="ruta-seccion" style="background: white; padding: 15px; margin: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-    <h3 style="margin-top: 0; color: var(--verde-selva); font-size: 16px;"><i class="fas fa-map-marked-alt"></i> Tu Siguiente Parada</h3>
-    <p id="siguiente-parada-texto" style="font-size: 14px; margin-bottom: 12px; font-weight: bold; color: #333;">
-        Cargando próxima parada...
-    </p>
-    
-    <!-- Contenedor del Mapa Adaptable -->
-    <div style="width: 100%; height: 250px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB;">
-        <iframe 
-            id="mapa-ruta"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.1895782782725!2d-73.578502!3d-4.510123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMcwMzAnMDYuNSJTIDczwrAzNCc0Mi42Ilc!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" 
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-</section>
+    <!-- 4.B PASAPORTE DIGITAL (Sistema de Recompensas - Integrado con alineación limpia) -->
+    <section class="info-seccion" style="margin-top: 15px; text-align: center;">
+        <h3 style="margin-top: 0; color: var(--verde-selva); font-size: 16px;"><i class="fas fa-passport"></i> Tu Pasaporte Turístico</h3>
+        <p id="progreso-texto" style="font-size: 13px; color: #666; margin-bottom: 12px;">¡Escanea monumentos para conseguir sellos!</p>
+        
+        <!-- Contenedor de Sellos Virtuales -->
+        <div id="contenedor-sellos" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <!-- JavaScript inyectará los círculos de los sellos aquí -->
+        </div>
+
+        <!-- Caja de Premio Oculta (Solo aparecerá al completar el 100%) -->
+        <div id="premio-completo" style="display: none; background: #FEF3C7; border: 2px dashed #D97706; padding: 12px; border-radius: 8px; margin-top: 10px;">
+            <h4 style="margin: 0 0 5px 0; color: #D97706;"><i class="fas fa-trophy"></i> ¡Ruta Completada!</h4>
+            <p style="font-size: 12px; margin: 0 0 8px 0; color: #92400E;">Presenta esta pantalla en los locales aliados para reclamar tu premio.</p>
+            <span style="font-family: monospace; font-weight: bold; background: white; padding: 4px 10px; border-radius: 4px; border: 1px solid #F59E0B; color: #B45309; font-size: 14px;">CÓDIGO: NAUTALOVER2026</span>
+        </div>
+    </section>
+
+    <!-- 4.C SECCIÓN: SIGUIENTE PARADA Y MAPA DE LA RUTA (Corregido alineación de ancho) -->
+    <section class="info-seccion" style="margin-top: 15px;">
+        <h3 style="margin-top: 0; color: var(--verde-selva); font-size: 16px;"><i class="fas fa-map-marked-alt"></i> Tu Siguiente Parada</h3>
+        <p id="siguiente-parada-texto" style="font-size: 14px; margin-bottom: 12px; font-weight: bold; color: #333;">
+            Cargando próxima parada...
+        </p>
+        
+        <!-- Contenedor del Mapa Adaptable al 100% -->
+        <div style="width: 100%; height: 250px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB;">
+            <iframe 
+                id="mapa-ruta"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.1895782782725!2d-73.578502!3d-4.510123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMcwMzAnMDYuNSJTIDczwrAzNCc0Mi42Ilc!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" 
+                width="100%" 
+                height="100%" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </section>
 
     <!-- 5. CHATBOT CON INTELIGENCIA ARTIFICIAL -->
     <section class="ia-chat-contenedor">
@@ -91,8 +110,8 @@
         </div>
     </section>
 
-    <!-- Vinculamos el cerebro del proyecto: JavaScript con atributo defer para asegurar carga -->
+    <!-- Cerebro del proyecto: JavaScript con atributo defer para asegurar carga ordenada -->
     <script src="js/app.js" defer></script>
-  
+    
 </body>
 </html>
