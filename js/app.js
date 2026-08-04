@@ -9,7 +9,7 @@ const OPENAI_API_KEY = 'sk-proj-gU3D7z2IyAGt48JfM0vKioCvA2azABcXGkze3yhM7wIh8YNt
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 // Lista de los monumentos oficiales
-const RUTA_MONUMENTOS = ['sapi', 'plaza', 'ucamara', 'bolognesi', 'zaragoza', 'mistica', 'playa', 'parroquia'];
+const RUTA_MONUMENTOS = ['plaza', 'ucamara', 'parroquia', 'sapi', 'bolognesi', 'playa', 'mistica', 'zaragoza'];
 
 // Diccionario con rutas peatonales exactas generadas en Google Maps para Nauta
 const MAPAS_RELEVANTES = {
@@ -222,13 +222,13 @@ function actualizarVisualizacionPasaporte() {
             nombre: 'Plaza Centenario',
             imagen: 'https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
         },
-        'sapi': {
-            nombre: 'Laguna Sapi Sapi',
-            imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
+        'ucamara': {
+            nombre: 'Teatro Ucamara',
+            imagen: 'https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
         },
-        'mercado-central': {
-            nombre: 'Mercado Central',
-            imagen: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/mercado.jpg
+        'parroquia': {
+            nombre: 'Parroquia San Felipe - San Tiago',
+            imagen: 'https://lh3.googleusercontent.com/d/10gczRkOfcoInxIPbHh0W4R-J0ZWr6wjZ' // Reemplazar por tu imagen o assets/imagenes/mercado.jpg
         }
     };
 
