@@ -15,13 +15,13 @@ const RUTA_MONUMENTOS = ['plaza', 'ucamara', 'parroquia', 'sapi', 'bolognesi', '
 // Datos completos del pasaporte para los 8 monumentos
 const DATOS_PASAPORTE = {
     'plaza': { nombre: 'Plaza Centenario', imagen: 'https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj' },
-    'ucamara': { nombre: 'Centro Ucamara', imagen: 'https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X' },
-    'parroquia': { nombre: 'Parroquia San Felipe', imagen: 'https://lh3.googleusercontent.com/d/10gczRkOfcoInxIPbHh0W4R-J0ZWr6wjZ' },
-    'sapi': { nombre: 'Lago Sapi Sapi', imagen: 'assets/imagenes/sapi.jpg' },
-    'bolognesi': { nombre: 'Malecón Bolognesi', imagen: 'assets/imagenes/bolognesi.jpg' },
-    'playa': { nombre: 'Playa Zaragoza', imagen: 'assets/imagenes/playa.jpg' },
-    'mistica': { nombre: 'Ruta Mística', imagen: 'assets/imagenes/mistica.jpg' },
-    'zaragoza': { nombre: 'Barrio Zaragoza', imagen: 'assets/imagenes/zaragoza.jpg' }
+    'ucamara': { nombre: 'Teatro Ucamara', imagen: 'https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X' },
+    'parroquia': { nombre: 'Parroquia', imagen: 'https://lh3.googleusercontent.com/d/10gczRkOfcoInxIPbHh0W4R-J0ZWr6wjZ' },
+    'sapi': { nombre: 'Laguna Sapi Sapi', imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' },
+    'bolognesi': { nombre: 'Plaza Bolognesi', imagen: 'https://lh3.googleusercontent.com/d/1RAOhmHW2wtEYHqxA1vOuR9RV9fGkf5cl' },
+    'playa': { nombre: 'Playa del Amor', imagen: 'https://lh3.googleusercontent.com/d/1mbYuGsz2dM6hB-lcpe5oq_9qFi5ECLSh' },
+    'mistica': { nombre: 'Santuario Rosa Mística', imagen: 'https://lh3.googleusercontent.com/d/1GrYJ5Z1ZuoGFDy2ivm2NXw8TKKmD_4rX' },
+    'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/12lrQc2kbhJP0O5gRwFxSgfsqup_6L0w1' }
 };
 
 // Diccionario con rutas peatonales exactas usando los mismos IDs que RUTA_MONUMENTOS
