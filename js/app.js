@@ -193,29 +193,8 @@ document.getElementById("btn-idioma").addEventListener("click", async () => {
     }
 });
 
-// 5. MÓDULO PASAPORTE DIGITAL (Blindado contra reinicios)
-function registrarVisitaPasaporte(idMonumento) {
-    let datosGuardados = localStorage.getItem("sellos_guianauta");
-    let sellosObtenidos = [];
 
-    if (datosGuardados) {
-        try {
-            sellosObtenidos = JSON.parse(datosGuardados);
-            if (!Array.isArray(sellosObtenidos)) sellosObtenidos = [];
-        } catch (e) {
-            sellosObtenidos = [];
-        }
-    }
-
-    // Si el monumento es válido y no está en la lista, lo añadimos de inmediato
-    if (RUTA_MONUMENTOS.includes(idMonumento) && !sellosObtenidos.includes(idMonumento)) {
-        sellosObtenidos.push(idMonumento);
-        localStorage.setItem("sellos_guianauta", JSON.stringify(sellosObtenidos));
-    }
-
-    actualizarVisualizacionPasaporte();
-}
-
+// 5. MÓDULO PASAPORTE DIGITAL (Miniaturas + Nombres + Checks)
 function actualizarVisualizacionPasaporte() {
     let datosGuardados = localStorage.getItem("sellos_guianauta");
     let sellosObtenidos = [];
@@ -237,33 +216,105 @@ function actualizarVisualizacionPasaporte() {
 
     contenedor.innerHTML = "";
 
-    RUTA_MONUMENTOS.forEach(monumento => {
+    // Mapeo con nombres legibles e imágenes de respaldo de los monumentos de Nauta
+    const DATOS_PASAPORTE = {
+        'plaza-armas': {
+            nombre: 'Plaza de Armas',
+            imagen: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
+        },
+        'sapi-sapi': {
+            nombre: 'Lago Sapi Sapi',
+            imagen: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
+        },
+        'mercado-central': {
+            nombre: 'Mercado Central',
+            imagen: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/mercado.jpg
+        }
+    };
+
+    // Ajustamos el contenedor principal para que los elementos se alineen horizontalmente con su texto
+    contenedor.style.display = "flex";
+    contenedor.style.justifyContent = "space-around";
+    contenedor.style.alignItems = "flex-start";
+    contenedor.style.gap = "10px";
+    contenedor.style.flexWrap = "wrap";
+
+    RUTA_MONUMENTOS.forEach(monumentoId => {
+        const infoMonumento = DATOS_PASAPORTE[monumentoId] || { nombre: monumentoId, imagen: '' };
+        const estaDesbloqueado = sellosObtenidos.includes(monumentoId);
+
+        // Tarjeta/Contenedor individual para el círculo + texto
+        const tarjetaSello = document.createElement("div");
+        tarjetaSello.style.display = "flex";
+        tarjetaSello.style.flexDirection = "column";
+        tarjetaSello.style.alignItems = "center";
+        tarjetaSello.style.width = "75px";
+
+        // Círculo del sello
         const circuloSello = document.createElement("div");
-        
-        circuloSello.style.width = "45px";
-        circuloSello.style.height = "45px";
+        circuloSello.style.width = "60px";
+        circuloSello.style.height = "60px";
         circuloSello.style.borderRadius = "50%";
+        circuloSello.style.position = "relative";
+        circuloSello.style.boxSizing = "border-box";
+        circuloSello.style.backgroundSize = "cover";
+        circuloSello.style.backgroundPosition = "center";
         circuloSello.style.display = "flex";
         circuloSello.style.alignItems = "center";
         circuloSello.style.justifyContent = "center";
-        circuloSello.style.fontSize = "18px";
         circuloSello.style.transition = "all 0.3s ease";
 
-        if (sellosObtenidos.includes(monumento)) {
-            circuloSello.style.background = "#D1FAE5";
-            circuloSello.style.border = "2px solid #10B981";
-            circuloSello.style.color = "#059669";
-            circuloSello.innerHTML = '<i class="fas fa-check-circle"></i>';
+        if (estaDesbloqueado) {
+            // Estado: VISITADO (Muestra foto en miniatura a color + Check flotante)
+            circuloSello.style.backgroundImage = `url('${infoMonumento.imagen}')`;
+            circuloSello.style.border = "3px solid #10B981";
+            circuloSello.style.boxShadow = "0 4px 6px rgba(16, 185, 129, 0.3)";
+
+            // Ícono de Check sobrepuesto en la esquina inferior derecha
+            const badgeCheck = document.createElement("span");
+            badgeCheck.innerHTML = "✓";
+            badgeCheck.style.position = "absolute";
+            badgeCheck.style.bottom = "-2px";
+            badgeCheck.style.right = "-2px";
+            badgeCheck.style.background = "#10B981";
+            badgeCheck.style.color = "#ffffff";
+            badgeCheck.style.fontSize = "12px";
+            badgeCheck.style.fontWeight = "bold";
+            badgeCheck.style.width = "20px";
+            badgeCheck.style.height = "20px";
+            badgeCheck.style.borderRadius = "50%";
+            badgeCheck.style.display = "flex";
+            badgeCheck.style.alignItems = "center";
+            badgeCheck.style.justifyContent = "center";
+            badgeCheck.style.border = "2px solid #ffffff";
+
+            circuloSello.appendChild(badgeCheck);
         } else {
-            circuloSello.style.background = "#F3F4F6";
-            circuloSello.style.border = "2px dashed #D1D5DB";
-            circuloSello.style.color = "#9CA3AF";
-            circuloSello.innerHTML = '<i class="fas fa-lock"></i>';
+            // Estado: BLOQUEADO (Imagen en escala de grises/oscura con candado)
+            circuloSello.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${infoMonumento.imagen}')`;
+            circuloSello.style.border = "2px dashed #9CA3AF";
+            circuloSello.style.color = "#ffffff";
+            circuloSello.style.fontSize = "18px";
+            circuloSello.innerHTML = "🔒";
         }
 
-        contenedor.appendChild(circuloSello);
+        // Etiqueta con el Nombre debajo del círculo
+        const etiquetaNombre = document.createElement("span");
+        etiquetaNombre.innerText = infoMonumento.nombre;
+        etiquetaNombre.style.fontSize = "0.75rem";
+        etiquetaNombre.style.textAlign = "center";
+        etiquetaNombre.style.marginTop = "6px";
+        etiquetaNombre.style.color = estaDesbloqueado ? "#065F46" : "#6B7280";
+        etiquetaNombre.style.fontWeight = estaDesbloqueado ? "bold" : "normal";
+        etiquetaNombre.style.lineHeight = "1.1";
+
+        // Ensamblamos los elementos
+        tarjetaSello.appendChild(circuloSello);
+        tarjetaSello.appendChild(etiquetaNombre);
+        contenedor.appendChild(tarjetaSello);
     });
 
+    // Actualizamos el contador de texto de forma segura
     textoProgreso.innerText = `Has recolectado ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} sellos de la ruta de Nauta.`;
 
     if (cajaPremio) {
