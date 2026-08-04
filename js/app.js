@@ -218,13 +218,13 @@ function actualizarVisualizacionPasaporte() {
 
     // Mapeo con nombres legibles e imágenes de respaldo de los monumentos de Nauta
     const DATOS_PASAPORTE = {
-        'sapi': {
-            nombre: 'Plaza de Armas',
-            imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
+        'plaza': {
+            nombre: 'Plaza Centenario',
+            imagen: 'https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
         },
-        'sapi-sapi': {
-            nombre: 'Lago Sapi Sapi',
-            imagen: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
+        'sapi': {
+            nombre: 'Laguna Sapi Sapi',
+            imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
         },
         'mercado-central': {
             nombre: 'Mercado Central',
