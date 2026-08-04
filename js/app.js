@@ -220,7 +220,7 @@ function actualizarVisualizacionPasaporte() {
     const DATOS_PASAPORTE = {
         'plaza-armas': {
             nombre: 'Plaza de Armas',
-            imagen: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=150&q=80' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
+            imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
         },
         'sapi-sapi': {
             nombre: 'Lago Sapi Sapi',
