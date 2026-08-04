@@ -2,37 +2,45 @@
    GUIANAUTA - Sistema Integrado: Google Sheets + Lógica QR + IA Real + Pasaporte + Mapas
    ========================================================================== */
 
-// 1. CONFIGURACIÓN DE LLAVES
+// 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-const OPENAI_API_KEY = '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'; 
+// NOTA DE SEGURIDAD: Revoca esta clave en OpenAI y usa un proxy/backend seguro.
+const OPENAI_API_KEY = 'sk-proj-...'; 
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-// Lista de los monumentos oficiales
+// Lista oficial de IDs de monumentos
 const RUTA_MONUMENTOS = ['plaza', 'ucamara', 'parroquia', 'sapi', 'bolognesi', 'playa', 'mistica', 'zaragoza'];
 
-// Diccionario con rutas peatonales exactas generadas en Google Maps para Nauta
+// Datos completos del pasaporte para los 8 monumentos
+const DATOS_PASAPORTE = {
+    'plaza': { nombre: 'Plaza Centenario', imagen: 'https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj' },
+    'ucamara': { nombre: 'Centro Ucamara', imagen: 'https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X' },
+    'parroquia': { nombre: 'Parroquia San Felipe', imagen: 'https://lh3.googleusercontent.com/d/10gczRkOfcoInxIPbHh0W4R-J0ZWr6wjZ' },
+    'sapi': { nombre: 'Lago Sapi Sapi', imagen: 'assets/imagenes/sapi.jpg' },
+    'bolognesi': { nombre: 'Malecón Bolognesi', imagen: 'assets/imagenes/bolognesi.jpg' },
+    'playa': { nombre: 'Playa Zaragoza', imagen: 'assets/imagenes/playa.jpg' },
+    'mistica': { nombre: 'Ruta Mística', imagen: 'assets/imagenes/mistica.jpg' },
+    'zaragoza': { nombre: 'Barrio Zaragoza', imagen: 'assets/imagenes/zaragoza.jpg' }
+};
+
+// Diccionario con rutas peatonales exactas usando los mismos IDs que RUTA_MONUMENTOS
 const MAPAS_RELEVANTES = {
-    'plaza-armas': {
+    'plaza': {
         siguienteNombre: "📍 Siguiente parada: Lago Sapi Sapi (Caminando por Jr. Tarapacá)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.203657784013!2d-73.57866752520638!3d-4.506542795467657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b6fa3500a4b%3A0xc3da0b75a176cc38!2sPlaza%20de%20Armas%20de%20Nauta%2C%20Nauta!3m2!1d-4.5055047!2d-73.5762031!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!5e0!3m2!1ses-419!2spe!4v1716584200000!5m2!1ses-419!2spe"
     },
-    'sapi-sapi': {
+    'sapi': {
         siguienteNombre: "📍 Siguiente parada: Mercado Central de Nauta (Caminando por Jr. Lima)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.198357784013!2d-73.57900002520638!3d-4.508500000000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!4m5!1s0x91ea6b66fa5a5555%3A0x5555555555555555!2sMercado%20Central%20De%20Nauta%2C%20Nauta!3m2!1d-4.5090000!2d-73.5765000!5e0!3m2!1ses-419!2spe!4v1716584300000!5m2!1ses-419!2spe"
-    },
-    'mercado-central': {
-        siguienteNombre: "🎉 ¡Felicidades! Has completado el circuito turístico principal de Nauta.",
-        embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15924.779774026362!2d-73.58784865!3d-4.50821035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b6f7902047b%3A0x8efb36511fa35712!2sNauta!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe"
     }
 };
 
 let enIngles = false;
 let textoOriginalEs = ""; 
 
-// EJECUCIÓN INMEDIATA: Cargamos los sellos que existan antes de procesar cualquier QR
+// EJECUCIÓN INMEDIATA
 document.addEventListener("DOMContentLoaded", () => {
-    // Forzar renderizado inicial del pasaporte con lo que haya en memoria
     actualizarVisualizacionPasaporte();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -44,12 +52,18 @@ document.addEventListener("DOMContentLoaded", () => {
         mostrarMensajePantalla("¡Bienvenido Viajero!", "Por favor, escanea un código QR oficial en cualquiera de los monumentos turísticos de la ciudad para conocer su historia.");
     }
 
-    document.getElementById("btn-enviar-chat").addEventListener("click", manejarPreguntaIA);
-    document.getElementById("chat-pregunta").addEventListener("keypress", (e) => {
-        if (e.key === 'Enter') manejarPreguntaIA();
-    });
+    const btnChat = document.getElementById("btn-enviar-chat");
+    if (btnChat) btnChat.addEventListener("click", manejarPreguntaIA);
 
-    document.getElementById("btn-leer-texto").addEventListener("click", hablarReseñaHistorica);
+    const inputChat = document.getElementById("chat-pregunta");
+    if (inputChat) {
+        inputChat.addEventListener("keypress", (e) => {
+            if (e.key === 'Enter') manejarPreguntaIA();
+        });
+    }
+
+    const btnLeer = document.getElementById("btn-leer-texto");
+    if (btnLeer) btnLeer.addEventListener("click", hablarReseñaHistorica);
 });
 
 function normalizarTexto(texto) {
@@ -60,7 +74,23 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// 2. CONEXIÓN Y FILTRADO: Google Sheets
+// 2. REGISTRO DE PASAPORTE (FUNCIÓN AGREGADA)
+function registrarVisitaPasaporte(idMonumento) {
+    let sellosObtenidos = [];
+    try {
+        sellosObtenidos = JSON.parse(localStorage.getItem("sellos_guianauta")) || [];
+    } catch (e) {
+        sellosObtenidos = [];
+    }
+
+    if (!sellosObtenidos.includes(idMonumento)) {
+        sellosObtenidos.push(idMonumento);
+        localStorage.setItem("sellos_guianauta", JSON.stringify(sellosObtenidos));
+        actualizarVisualizacionPasaporte();
+    }
+}
+
+// 3. CONEXIÓN Y FILTRADO: Google Sheets
 async function cargarYMostrarMonumento(idBuscado) {
     try {
         const respuesta = await fetch(SHEET_URL);
@@ -72,7 +102,7 @@ async function cargarYMostrarMonumento(idBuscado) {
         const idBuscadoLimpio = normalizarTexto(idBuscado);
 
         filas.forEach(fila => {
-            if (fila.c[0]) {
+            if (fila.c && fila.c[0]) {
                 const idCeldaLimpio = normalizarTexto(fila.c[0].v);
                 if (idCeldaLimpio === idBuscadoLimpio) {
                     monumentoEncontrado = {
@@ -89,20 +119,25 @@ async function cargarYMostrarMonumento(idBuscado) {
         if (monumentoEncontrado) {
             document.getElementById("monumento-titulo").innerText = monumentoEncontrado.nombre;
             document.getElementById("monumento-descripcion").innerText = monumentoEncontrado.descripcion;
-            document.getElementById("monumento-imagen").src = monumentoEncontrado.url_imagen;
+            
+            const imgElemento = document.getElementById("monumento-imagen");
+            if (imgElemento) imgElemento.src = monumentoEncontrado.url_imagen;
 
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
 
             const elementoAudio = document.getElementById("monumento-audio");
-            if (monumentoEncontrado.url_audio) {
-                elementoAudio.src = monumentoEncontrado.url_audio;
-                document.querySelector(".audio-seccion").style.display = "block";
-            } else {
-                document.querySelector(".audio-seccion").style.display = "none";
+            const seccionAudio = document.querySelector(".audio-seccion");
+            if (elementoAudio && seccionAudio) {
+                if (monumentoEncontrado.url_audio) {
+                    elementoAudio.src = monumentoEncontrado.url_audio;
+                    seccionAudio.style.display = "block";
+                } else {
+                    seccionAudio.style.display = "none";
+                }
             }
 
-            // Guardamos el progreso de este monumento y actualizamos la interfaz
+            // Registrar e interacciones de interfaz
             registrarVisitaPasaporte(monumentoEncontrado.id);
             actualizarMapaRuta(monumentoEncontrado.id);
 
@@ -116,11 +151,12 @@ async function cargarYMostrarMonumento(idBuscado) {
     }
 }
 
-// 3. CONEXIÓN REAL CON LA IA (OpenAI)
+// 4. CONEXIÓN REAL CON LA IA (OpenAI)
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
+    if (!inputPregunta) return;
+
     const preguntaTexto = inputPregunta.value.trim();
-    
     if (preguntaTexto === "") return;
 
     agregarMensajeAlChat(preguntaTexto, "usuario-mensaje");
@@ -161,51 +197,47 @@ async function manejarPreguntaIA() {
     }
 }
 
-// 4. MÓDULO DE TRADUCCIÓN NATIVA VELOZ
-document.getElementById("btn-idioma").addEventListener("click", async () => {
-    const descripcionElemento = document.getElementById("monumento-descripcion");
-    const btnIdioma = document.getElementById("btn-idioma");
+// 5. MÓDULO DE TRADUCCIÓN NATIVA
+const btnIdioma = document.getElementById("btn-idioma");
+if (btnIdioma) {
+    btnIdioma.addEventListener("click", async () => {
+        const descripcionElemento = document.getElementById("monumento-descripcion");
 
-    if (!textoOriginalEs) {
-        textoOriginalEs = descripcionElemento.innerText;
-    }
+        if (!textoOriginalEs) {
+            textoOriginalEs = descripcionElemento.innerText;
+        }
 
-    enIngles = !enIngles;
+        enIngles = !enIngles;
 
-    if (enIngles) {
-        btnIdioma.innerText = "🇵🇪 Español";
-        descripcionElemento.innerText = "Translating / Traduciendo...";
+        if (enIngles) {
+            btnIdioma.innerText = "🇵🇪 Español";
+            descripcionElemento.innerText = "Translating / Traduciendo...";
 
-        try {
-            const respuesta = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&q=${encodeURIComponent(textoOriginalEs)}`);
-            const datos = await respuesta.json();
-            const textoTraducido = datos[0].map(item => item[0]).join("");
-            descripcionElemento.innerText = textoTraducido;
-        } catch (error) {
-            console.error("Error al traducir:", error);
-            descripcionElemento.innerText = textoOriginalEs; 
-            enIngles = false;
+            try {
+                const respuesta = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&q=${encodeURIComponent(textoOriginalEs)}`);
+                const datos = await respuesta.json();
+                const textoTraducido = datos[0].map(item => item[0]).join("");
+                descripcionElemento.innerText = textoTraducido;
+            } catch (error) {
+                console.error("Error al traducir:", error);
+                descripcionElemento.innerText = textoOriginalEs; 
+                enIngles = false;
+                btnIdioma.innerText = "🇺🇸 English / 🇵🇪 ESP";
+            }
+        } else {
             btnIdioma.innerText = "🇺🇸 English / 🇵🇪 ESP";
+            descripcionElemento.innerText = textoOriginalEs;
         }
-    } else {
-        btnIdioma.innerText = "🇺🇸 English / 🇵🇪 ESP";
-        descripcionElemento.innerText = textoOriginalEs;
-    }
-});
+    });
+}
 
-
-// 5. MÓDULO PASAPORTE DIGITAL (Miniaturas + Nombres + Checks)
+// 6. MÓDULO PASAPORTE DIGITAL
 function actualizarVisualizacionPasaporte() {
-    let datosGuardados = localStorage.getItem("sellos_guianauta");
     let sellosObtenidos = [];
-
-    if (datosGuardados) {
-        try {
-            sellosObtenidos = JSON.parse(datosGuardados);
-            if (!Array.isArray(sellosObtenidos)) sellosObtenidos = [];
-        } catch (e) {
-            sellosObtenidos = [];
-        }
+    try {
+        sellosObtenidos = JSON.parse(localStorage.getItem("sellos_guianauta")) || [];
+    } catch (e) {
+        sellosObtenidos = [];
     }
 
     const contenedor = document.getElementById("contenedor-sellos");
@@ -215,24 +247,6 @@ function actualizarVisualizacionPasaporte() {
     if (!contenedor || !textoProgreso) return; 
 
     contenedor.innerHTML = "";
-
-    // Mapeo con nombres legibles e imágenes de respaldo de los monumentos de Nauta
-    const DATOS_PASAPORTE = {
-        'plaza': {
-            nombre: 'Plaza Centenario',
-            imagen: 'https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
-        },
-        'ucamara': {
-            nombre: 'Teatro Ucamara',
-            imagen: 'https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X' // Reemplazar por tu imagen o assets/imagenes/sapi.jpg
-        },
-        'parroquia': {
-            nombre: 'Parroquia San Felipe - San Tiago',
-            imagen: 'https://lh3.googleusercontent.com/d/10gczRkOfcoInxIPbHh0W4R-J0ZWr6wjZ' // Reemplazar por tu imagen o assets/imagenes/mercado.jpg
-        }
-    };
-
-    // Ajustamos el contenedor principal para que los elementos se alineen horizontalmente con su texto
     contenedor.style.display = "flex";
     contenedor.style.justifyContent = "space-around";
     contenedor.style.alignItems = "flex-start";
@@ -243,14 +257,12 @@ function actualizarVisualizacionPasaporte() {
         const infoMonumento = DATOS_PASAPORTE[monumentoId] || { nombre: monumentoId, imagen: '' };
         const estaDesbloqueado = sellosObtenidos.includes(monumentoId);
 
-        // Tarjeta/Contenedor individual para el círculo + texto
         const tarjetaSello = document.createElement("div");
         tarjetaSello.style.display = "flex";
         tarjetaSello.style.flexDirection = "column";
         tarjetaSello.style.alignItems = "center";
         tarjetaSello.style.width = "75px";
 
-        // Círculo del sello
         const circuloSello = document.createElement("div");
         circuloSello.style.width = "60px";
         circuloSello.style.height = "60px";
@@ -265,12 +277,10 @@ function actualizarVisualizacionPasaporte() {
         circuloSello.style.transition = "all 0.3s ease";
 
         if (estaDesbloqueado) {
-            // Estado: VISITADO (Muestra foto en miniatura a color + Check flotante)
             circuloSello.style.backgroundImage = `url('${infoMonumento.imagen}')`;
             circuloSello.style.border = "3px solid #10B981";
             circuloSello.style.boxShadow = "0 4px 6px rgba(16, 185, 129, 0.3)";
 
-            // Ícono de Check sobrepuesto en la esquina inferior derecha
             const badgeCheck = document.createElement("span");
             badgeCheck.innerHTML = "✓";
             badgeCheck.style.position = "absolute";
@@ -290,7 +300,6 @@ function actualizarVisualizacionPasaporte() {
 
             circuloSello.appendChild(badgeCheck);
         } else {
-            // Estado: BLOQUEADO (Imagen en escala de grises/oscura con candado)
             circuloSello.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${infoMonumento.imagen}')`;
             circuloSello.style.border = "2px dashed #9CA3AF";
             circuloSello.style.color = "#ffffff";
@@ -298,7 +307,6 @@ function actualizarVisualizacionPasaporte() {
             circuloSello.innerHTML = "🔒";
         }
 
-        // Etiqueta con el Nombre debajo del círculo
         const etiquetaNombre = document.createElement("span");
         etiquetaNombre.innerText = infoMonumento.nombre;
         etiquetaNombre.style.fontSize = "0.75rem";
@@ -308,25 +316,19 @@ function actualizarVisualizacionPasaporte() {
         etiquetaNombre.style.fontWeight = estaDesbloqueado ? "bold" : "normal";
         etiquetaNombre.style.lineHeight = "1.1";
 
-        // Ensamblamos los elementos
         tarjetaSello.appendChild(circuloSello);
         tarjetaSello.appendChild(etiquetaNombre);
         contenedor.appendChild(tarjetaSello);
     });
 
-    // Actualizamos el contador de texto de forma segura
     textoProgreso.innerText = `Has recolectado ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} sellos de la ruta de Nauta.`;
 
     if (cajaPremio) {
-        if (sellosObtenidos.length === RUTA_MONUMENTOS.length) {
-            cajaPremio.style.display = "block";
-        } else {
-            cajaPremio.style.display = "none";
-        }
+        cajaPremio.style.display = (sellosObtenidos.length === RUTA_MONUMENTOS.length) ? "block" : "none";
     }
 }
 
-// 6. MÓDULO DE MAPAS
+// 7. MÓDULO DE MAPAS
 function actualizarMapaRuta(idMonumentoActual) {
     const textoParada = document.getElementById("siguiente-parada-texto");
     const iframeMapa = document.getElementById("mapa-ruta");
@@ -343,10 +345,12 @@ function actualizarMapaRuta(idMonumentoActual) {
     }
 }
 
-// Funciones Auxiliares de Interfaz
+// FUNCIONES AUXILIARES DE INTERFAZ
 function mostrarMensajePantalla(titulo, mensaje) {
-    document.getElementById("monumento-titulo").innerText = titulo;
-    document.getElementById("monumento-descripcion").innerText = mensaje;
+    const tituloEl = document.getElementById("monumento-titulo");
+    const descEl = document.getElementById("monumento-descripcion");
+    if (tituloEl) tituloEl.innerText = titulo;
+    if (descEl) descEl.innerText = mensaje;
 }
 
 function agregarMensajeAlChat(texto, claseEstilo) {
@@ -366,9 +370,12 @@ function agregarMensajeAlChat(texto, claseEstilo) {
     return idUnico;
 }
 
-// 7. MÓDULO TEXT-TO-SPEECH
+// 8. MÓDULO TEXT-TO-SPEECH
 function hablarReseñaHistorica() {
-    const textoParaLeer = document.getElementById("monumento-descripcion").innerText;
+    const descEl = document.getElementById("monumento-descripcion");
+    if (!descEl) return;
+
+    const textoParaLeer = descEl.innerText;
     const botonEfecto = document.getElementById("btn-leer-texto");
 
     if (!botonEfecto) return;
@@ -376,7 +383,7 @@ function hablarReseñaHistorica() {
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
-        botonEfecto.style.backgroundColor = 'var(--verde-selva)';
+        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
         return;
     }
 
@@ -392,7 +399,7 @@ function hablarReseñaHistorica() {
 
     lectura.onend = () => {
         botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
-        botonEfecto.style.backgroundColor = 'var(--verde-selva)';
+        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
     };
 
     window.speechSynthesis.speak(lectura);
