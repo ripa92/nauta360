@@ -9,7 +9,7 @@ const OPENAI_API_KEY = 'sk-proj-gU3D7z2IyAGt48JfM0vKioCvA2azABcXGkze3yhM7wIh8YNt
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 // Lista de los monumentos oficiales
-const RUTA_MONUMENTOS = ['sapi', 'parroquia', 'ucamara', 'bolognesi', 'zaragoza', 'mistica', 'playa', 'plaza'];
+const RUTA_MONUMENTOS = ['sapi', 'plaza', 'ucamara', 'bolognesi', 'zaragoza', 'mistica', 'playa', 'parroquia'];
 
 // Diccionario con rutas peatonales exactas generadas en Google Maps para Nauta
 const MAPAS_RELEVANTES = {
