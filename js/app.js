@@ -218,7 +218,7 @@ function actualizarVisualizacionPasaporte() {
 
     // Mapeo con nombres legibles e imágenes de respaldo de los monumentos de Nauta
     const DATOS_PASAPORTE = {
-        'plaza-armas': {
+        'sapi': {
             nombre: 'Plaza de Armas',
             imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' // Reemplazar por tu imagen o assets/imagenes/plaza.jpg
         },
