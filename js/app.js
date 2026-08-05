@@ -4,7 +4,7 @@
 
 // 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-// NOTA DE SEGURIDAD: Revoca esta clave en OpenAI y usa un proxy/backend seguro.
+// NOTA DE SEGURIDAD: Revoca esta clave en OpenAI y usa un proxy/backend seguro para producción.
 const OPENAI_API_KEY = 'sk-proj-...'; 
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
@@ -31,7 +31,7 @@ const MAPAS_RELEVANTES = {
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3977.4839529038686!2d-73.57793617594335!3d-4.506417847622853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0223a12e199b9%3A0x8bd2ed680bf5bf7c!2sPlaza%20De%20Armas%20De%20Nauta%2C%20FCVF%2B9RF%2C%20C.%20Diego%20Rodriguez%2C%20Nauta%2016300!3m2!1d-4.5065662!2d-73.5754512!4m5!1s0x91c0223a6e467e8b%3A0xc174aea122a2c29b!2sTEATRO%20UCAMARA%2C%20FCVF%2B9XC%2C%20Nauta%2016300!3m2!1d-4.506573899999999!2d-73.5751126!5e0!3m2!1ses!2spe!4v1785896490603!5m2!1ses!2spe"
     },
     'ucamara': {
-        siguienteNombre: "📍 Siguiente parada: Iglesia San Felipe y San Tiago (Caminando fente a la plaza)",
+        siguienteNombre: "📍 Siguiente parada: Iglesia San Felipe y San Tiago (Caminando frente a la plaza)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m24!1m8!1m3!1d3977.4842157989983!2d-73.57791057594345!3d-4.50636979762253!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0223a6e467e8b%3A0xc174aea122a2c29b!2sTEATRO%20UCAMARA%2C%20FCVF%2B9XC%2C%20Nauta%2016300!3m2!1d-4.506573899999999!2d-73.5751126!4m5!1s0x91c0232bd40da05b%3A0x9d211b32a28f51a6!2sIglesia%20Matriz%20(San%20Felipe%20y%20Santiago)%2C%20FCVF%2BGQW%2C%20Nauta%2016300!3m2!1d-4.5061307!2d-73.5755587!5e0!3m2!1ses!2spe!4v1785897064407!5m2!1ses!2spe"
     },
     'parroquia': {
@@ -39,15 +39,15 @@ const MAPAS_RELEVANTES = {
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1988.7460239374361!2d-73.57815526164931!3d-4.504938074942083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0232bd40da05b%3A0x9d211b32a28f51a6!2sIglesia%20Matriz%20(San%20Felipe%20y%20Santiago)%2C%20FCVF%2BGQW%2C%20Nauta%2016300!3m2!1d-4.5061307!2d-73.5755587!4m5!1s0x91c02237232a68f5%3A0xae82109b6254dc21!2sLaguna%20sapi%20sapi%2C%20Nauta%2016300!3m2!1d-4.5037389!2d-73.5781777!5e0!3m2!1ses!2spe!4v1785897191159!5m2!1ses!2spe"
     },
     'sapi': {
-        siguienteNombre: "📍 Siguiente parada: Plaza Bolognesi (Caminando fente al Sapi Sapi)",
+        siguienteNombre: "📍 Siguiente parada: Plaza Bolognesi (Caminando frente al Sapi Sapi)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1988.7495725980027!2d-73.5791056116871!3d-4.5036402749375695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c02237232a68f5%3A0xae82109b6254dc21!2sLaguna%20sapi%20sapi%2C%20Nauta%2016300!3m2!1d-4.5037389!2d-73.5781777!4m5!1s0x91c022372c33fa25%3A0xde9b8002d4e5b8d0!2sPlaza%20Francisco%20Bolognesi%2C%20FCWF%2BC2X%2C%20Nauta%2016300!3m2!1d-4.5038766!2d-73.57738069999999!5e0!3m2!1ses!2spe!4v1785897299767!5m2!1ses!2spe"
     },
     'bolognesi': {
-        siguienteNombre: "📍 Siguiente parada: Playa del Amor (Calle Diego Arturo con San Jose)",
+        siguienteNombre: "📍 Siguiente parada: Playa del Amor (Calle Diego Arturo con San José)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3977.5126125012084!2d-73.58265892594345!3d-4.501176647589526!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c022372c33fa25%3A0xde9b8002d4e5b8d0!2sPlaza%20Francisco%20Bolognesi%2C%20FCWF%2BC2X%2C%20Nauta%2016300!3m2!1d-4.5038766!2d-73.57738069999999!4m5!1s0x91c022357351b59d%3A0x93764620fbb8358f!2sPLAYA%20DEL%20AMOR%2C%20Nauta%2016300!3m2!1d-4.4982185!2d-73.58153039999999!5e0!3m2!1ses!2spe!4v1785897398930!5m2!1ses!2spe"
     },
     'playa': {
-        siguienteNombre: "📍 Siguiente parada: Santuario Virgen Rosa Mistica (CENCCA)",
+        siguienteNombre: "📍 Siguiente parada: Santuario Virgen Rosa Mística (CENCCA)",
         embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d15910.079952264952!2d-73.5813450672859!3d-4.499826835885302!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c022357351b59d%3A0x93764620fbb8358f!2sPLAYA%20DEL%20AMOR%2C%20Nauta%2016300!3m2!1d-4.4982185!2d-73.58153039999999!4m5!1s0x91c023d5623529e5%3A0xbec5261b6c557efa!2sSANTUARIO%20VIRGEN%20ROSA%20MISTICA%2C%20GC4R%2BC46%2C%20Nauta%2016300!3m2!1d-4.4939599!2d-73.55974549999999!5e0!3m2!1ses!2spe!4v1785897484736!5m2!1ses!2spe"
     },
     'mistica': {
@@ -126,20 +126,21 @@ async function cargarYMostrarMonumento(idBuscado) {
         const idBuscadoLimpio = normalizarTexto(idBuscado);
 
         filas.forEach(fila => {
-            if (fila.c && fila.c[0]) {
+            if (fila.c && fila.c[0] && fila.c[0].v !== null) {
                 const idCeldaLimpio = normalizarTexto(fila.c[0].v);
                 if (idCeldaLimpio === idBuscadoLimpio) {
+                    const fallbackImg = fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg";
                     monumentoEncontrado = {
                         id: idCeldaLimpio, 
-                        nombre: fila.c[1] ? fila.c[1].v : "Monumento sin nombre",
-                        descripcion: fila.c[2] ? fila.c[2].v : "Sin descripción disponible.",
-                        url_imagen: fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg",
-                        url_audio: fila.c[4] ? fila.c[4].v : "",
-                        // Lectura de URLs para la galería desde Google Sheets (Columnas F, G, H, I -> Índices 5, 6, 7, 8)
-                        foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
-                        foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
-                        foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
-                        foto4: (fila.c[8] && fila.c[8].v) ? fila.c[8].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg")
+                        nombre: (fila.c[1] && fila.c[1].v) ? fila.c[1].v : "Monumento sin nombre",
+                        descripcion: (fila.c[2] && fila.c[2].v) ? fila.c[2].v : "Sin descripción disponible.",
+                        url_imagen: fallbackImg,
+                        url_audio: (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "",
+                        // Galería dinámicamente cargada
+                        foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : fallbackImg,
+                        foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : fallbackImg,
+                        foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : fallbackImg,
+                        foto4: (fila.c[8] && fila.c[8].v) ? fila.c[8].v : fallbackImg
                     };
                 }
             }
@@ -186,12 +187,12 @@ async function cargarYMostrarMonumento(idBuscado) {
         }
 
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error al cargar Google Sheets:", error);
         mostrarMensajePantalla("Error de Conexión", "No se pudo conectar a la base de datos.");
     }
 }
 
-// 4. CONEXIÓN REAL CON LA IA (OpenAI)
+// 4. CONEXIÓN CON IA (OpenAI)
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
     if (!inputPregunta) return;
@@ -227,9 +228,13 @@ async function manejarPreguntaIA() {
         });
 
         const datosIA = await respuestaIA.json();
-        const respuestaTexto = datosIA.choices[0].message.content;
-
-        document.getElementById(idMensajeEspera).innerText = respuestaTexto;
+        
+        if (datosIA.choices && datosIA.choices[0]) {
+            const respuestaTexto = datosIA.choices[0].message.content;
+            document.getElementById(idMensajeEspera).innerText = respuestaTexto;
+        } else {
+            throw new Error("Respuesta de IA no válida");
+        }
 
     } catch (error) {
         console.error("Error OpenAI API:", error);
@@ -428,7 +433,8 @@ function hablarReseñaHistorica() {
     }
 
     const lectura = new SpeechSynthesisUtterance(textoParaLeer);
-    lectura.lang = 'es-ES'; 
+    // Asigna el idioma en función de la traducción actual
+    lectura.lang = enIngles ? 'en-US' : 'es-ES'; 
     lectura.rate = 1.0; 
     lectura.pitch = 1.0; 
 
@@ -438,6 +444,11 @@ function hablarReseñaHistorica() {
     };
 
     lectura.onend = () => {
+        botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
+        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
+    };
+
+    lectura.onerror = () => {
         botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
         botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
     };
