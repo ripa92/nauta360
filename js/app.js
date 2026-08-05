@@ -21,7 +21,7 @@ const DATOS_PASAPORTE = {
     'bolognesi': { nombre: 'Plaza Bolognesi', imagen: 'https://lh3.googleusercontent.com/d/1RAOhmHW2wtEYHqxA1vOuR9RV9fGkf5cl' },
     'playa': { nombre: 'Playa del Amor', imagen: 'https://lh3.googleusercontent.com/d/1mbYuGsz2dM6hB-lcpe5oq_9qFi5ECLSh' },
     'mistica': { nombre: 'Santuario Rosa Mística', imagen: 'https://lh3.googleusercontent.com/d/1GrYJ5Z1ZuoGFDy2ivm2NXw8TKKmD_4rX' },
-    'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/12lrQc2kbhJP0O5gRwFxSgfsqup_6L0w1' }
+    'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/15H_u-r9Y4GN9NdddIdIiVgcm3YOzpMgC' }
 };
 
 // Diccionario con rutas peatonales exactas usando los mismos IDs que RUTA_MONUMENTOS
