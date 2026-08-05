@@ -258,3 +258,58 @@ header h1 span {
         max-width: 500px; /* Simula un teléfono celular en computadoras */
     }
 }
+/* ==========================================================================
+   MODAL PARA AMPLIAR IMÁGENES DE LA GALERÍA
+   ========================================================================== */
+
+/* Cursor e indicador de clic EXCLUSIVO para la Galería de Fotos */
+#galeria-1, #galeria-2, #galeria-3, #galeria-4 {
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#galeria-1:hover, #galeria-2:hover, #galeria-3:hover, #galeria-4:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+/* Modal / Visor de Pantalla Completa */
+.modal-imagen {
+    display: none;
+    position: fixed;
+    z-index: 2500;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.modal-imagen.activo {
+    display: flex;
+}
+
+.modal-contenido {
+    max-width: 95%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8);
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: var(--blanco-puro, #FFFFFF);
+    font-size: 38px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 2501;
+    user-select: none;
+}
