@@ -4,7 +4,6 @@
 
 // 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-// NOTA DE SEGURIDAD: Revoca esta clave en OpenAI y usa un proxy/backend seguro para producción.
 const OPENAI_API_KEY = 'sk-proj-...'; 
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
@@ -21,10 +20,10 @@ const DATOS_PASAPORTE = {
     'bolognesi': { nombre: 'Plaza Bolognesi', imagen: 'https://lh3.googleusercontent.com/d/1RAOhmHW2wtEYHqxA1vOuR9RV9fGkf5cl' },
     'playa': { nombre: 'Playa del Amor', imagen: 'https://lh3.googleusercontent.com/d/1mbYuGsz2dM6hB-lcpe5oq_9qFi5ECLSh' },
     'mistica': { nombre: 'Santuario Rosa Mística', imagen: 'https://lh3.googleusercontent.com/d/1GrYJ5Z1ZuoGFDy2ivm2NXw8TKKmD_4rX' },
-    'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/15H_u-r9Y4GN9NdddIdIiVgcm3YOzpMgC' }
+    'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/12lrQc2kbhJP0O5gRwFxSgfsqup_6L0w1' }
 };
 
-// Diccionario con rutas peatonales exactas usando los mismos IDs que RUTA_MONUMENTOS
+// Diccionario con rutas peatonales exactas
 const MAPAS_RELEVANTES = {
     'plaza': {
         siguienteNombre: "📍 Siguiente parada: Teatro Ucamara (Caminando frente a la plaza)",
@@ -71,9 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const monumentoId = urlParams.get('id'); 
 
     if (monumentoId) {
+        // Muestra todas las secciones si hay un ID detectado
+        ocultarSeccionesSecundarias(false);
         cargarYMostrarMonumento(monumentoId);
     } else {
-        mostrarMensajePantalla("¡Bienvenido Viajero!", "Por favor, escanea un código QR oficial en cualquiera de los monumentos turísticos de la ciudad para conocer su historia.");
+        // Modo Inicio: Oculta secciones de abajo y muestra mensaje de bienvenida
+        ocultarSeccionesSecundarias(true);
+        mostrarMensajeBienvenida();
     }
 
     const btnChat = document.getElementById("btn-enviar-chat");
@@ -89,9 +92,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnLeer = document.getElementById("btn-leer-texto");
     if (btnLeer) btnLeer.addEventListener("click", hablarReseñaHistorica);
 
-    // Inicialización del Modal para la Galería (Corregido con IDs exactos del HTML)
     inicializarModalGaleria();
 });
+
+// CONTROL DE VISIBILIDAD DE SECCIONES INTERACTIVAS
+function ocultarSeccionesSecundarias(ocultar) {
+    const estadoDisplay = ocultar ? "none" : "block";
+
+    // Ocultar/Mostrar Audio, Galería, Chat IA, Pasaporte y Mapa
+    const seccionAudio = document.querySelector(".audio-seccion");
+    const seccionGaleria = document.querySelector(".galeria-seccion") || document.getElementById("galeria-1")?.closest("section");
+    const seccionChat = document.querySelector(".chat-seccion") || document.getElementById("chat-historial")?.closest("section");
+    const seccionPasaporte = document.querySelector(".pasaporte-seccion") || document.getElementById("contenedor-sellos")?.closest("section");
+    const seccionMapa = document.querySelector(".mapa-seccion") || document.getElementById("mapa-ruta")?.closest("section");
+
+    if (seccionAudio) seccionAudio.style.display = estadoDisplay;
+    if (seccionGaleria) seccionGaleria.style.display = estadoDisplay;
+    if (seccionChat) seccionChat.style.display = estadoDisplay;
+    if (seccionPasaporte) seccionPasaporte.style.display = estadoDisplay;
+    if (seccionMapa) seccionMapa.style.display = estadoDisplay;
+}
+
+function mostrarMensajeBienvenida() {
+    const tituloEl = document.getElementById("monumento-titulo");
+    const descEl = document.getElementById("monumento-descripcion");
+    const imgEl = document.getElementById("monumento-imagen");
+
+    if (tituloEl) tituloEl.innerText = "¡Bienvenido a GuiaNauta 360!";
+    if (descEl) descEl.innerText = "Explora la riqueza histórica de Nauta. Escanea los códigos QR ubicados en los monumentos de la ciudad para activar tu guía interactivo, audio-relatos, mapas y tu pasaporte digital de turista.";
+    if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"; // Imagen representativa de Nauta
+}
 
 function normalizarTexto(texto) {
     if (!texto) return "";
@@ -139,7 +169,6 @@ async function cargarYMostrarMonumento(idBuscado) {
                         descripcion: (fila.c[2] && fila.c[2].v) ? fila.c[2].v : "Sin descripción disponible.",
                         url_imagen: fallbackImg,
                         url_audio: (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "",
-                        // Galería dinámicamente cargada
                         foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : fallbackImg,
                         foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : fallbackImg,
                         foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : fallbackImg,
@@ -156,7 +185,6 @@ async function cargarYMostrarMonumento(idBuscado) {
             const imgElemento = document.getElementById("monumento-imagen");
             if (imgElemento) imgElemento.src = monumentoEncontrado.url_imagen;
 
-            // --- CARGA DINÁMICA DE LA GALERÍA DE FOTOS ---
             const g1 = document.getElementById("galeria-1");
             const g2 = document.getElementById("galeria-2");
             const g3 = document.getElementById("galeria-3");
@@ -181,16 +209,17 @@ async function cargarYMostrarMonumento(idBuscado) {
                 }
             }
 
-            // Registrar e interacciones de interfaz
             registrarVisitaPasaporte(monumentoEncontrado.id);
             actualizarMapaRuta(monumentoEncontrado.id);
 
         } else {
+            ocultarSeccionesSecundarias(true);
             mostrarMensajePantalla("Monumento no encontrado", "El código QR no coincide con ningún lugar registrado.");
         }
 
     } catch (error) {
         console.error("Error al cargar Google Sheets:", error);
+        ocultarSeccionesSecundarias(true);
         mostrarMensajePantalla("Error de Conexión", "No se pudo conectar a la base de datos.");
     }
 }
@@ -382,13 +411,10 @@ function actualizarMapaRuta(idMonumentoActual) {
         const datosRuta = MAPAS_RELEVANTES[idMonumentoActual];
         if (textoParada) textoParada.innerText = datosRuta.siguienteNombre;
         iframeMapa.src = datosRuta.embedUrl;
-    } else {
-        if (textoParada) textoParada.innerText = "📍 Explora los encantos de la ciudad de Nauta";
-        iframeMapa.src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15924.779774026362!2d-73.578502!3d-4.50821035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91ea6b6f7902047b%3A0x8efb36511fa35712!2sNauta!5e0!3m2!1ses-419!2spe!4v1710000000000!5m2!1ses-419!2spe";
     }
 }
 
-// 8. MÓDULO VISOR MODAL (Para los IDs id="modal-imagen" e id="imagen-ampliada" de tu HTML)
+// 8. MÓDULO VISOR MODAL
 function inicializarModalGaleria() {
     const modalVisor = document.getElementById("modal-imagen");
     const imagenAmpliada = document.getElementById("imagen-ampliada");
@@ -405,13 +431,11 @@ function inicializarModalGaleria() {
         }
     }
 
-    // Asigna el evento click a las 4 fotos de la Galería (galeria-1, galeria-2, galeria-3, galeria-4)
     [1, 2, 3, 4].forEach(num => {
         habilitarVisorGaleria(document.getElementById(`galeria-${num}`));
     });
 }
 
-// Función global requerida para cerrar el modal al hacer clic en el fondo o en la 'X'
 window.cerrarModalImagen = function() {
     const modalVisor = document.getElementById("modal-imagen");
     if (modalVisor) {
