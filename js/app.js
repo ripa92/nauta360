@@ -32,31 +32,31 @@ const MAPAS_RELEVANTES = {
     },
     'ucamara': {
         siguienteNombre: "📍 Siguiente parada: Iglesia San Felipe y San Tiago (Caminando fente a la plaza)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m24!1m8!1m3!1d3977.4842157989983!2d-73.57791057594345!3d-4.50636979762253!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0223a6e467e8b%3A0xc174aea122a2c29b!2sTEATRO%20UCAMARA%2C%20FCVF%2B9XC%2C%20Nauta%2016300!3m2!1d-4.506573899999999!2d-73.5751126!4m5!1s0x91c0232bd40da05b%3A0x9d211b32a28f51a6!2sIglesia%20Matriz%20(San%20Felipe%20y%20Santiago)%2C%20FCVF%2BGQW%2C%20Nauta%2016300!3m2!1d-4.5061307!2d-73.5755587!5e0!3m2!1ses!2spe!4v1785897064407!5m2!1ses!2spe"
     },
     'parroquia': {
         siguienteNombre: "📍 Siguiente parada: Laguna Sapi Sapi (Caminando por Jr. Manuel Pacaya)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1988.7460239374361!2d-73.57815526164931!3d-4.504938074942083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0232bd40da05b%3A0x9d211b32a28f51a6!2sIglesia%20Matriz%20(San%20Felipe%20y%20Santiago)%2C%20FCVF%2BGQW%2C%20Nauta%2016300!3m2!1d-4.5061307!2d-73.5755587!4m5!1s0x91c02237232a68f5%3A0xae82109b6254dc21!2sLaguna%20sapi%20sapi%2C%20Nauta%2016300!3m2!1d-4.5037389!2d-73.5781777!5e0!3m2!1ses!2spe!4v1785897191159!5m2!1ses!2spe"
     },
     'sapi': {
         siguienteNombre: "📍 Siguiente parada: Plaza Bolognesi (Caminando fente al Sapi Sapi)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1988.7495725980027!2d-73.5791056116871!3d-4.5036402749375695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c02237232a68f5%3A0xae82109b6254dc21!2sLaguna%20sapi%20sapi%2C%20Nauta%2016300!3m2!1d-4.5037389!2d-73.5781777!4m5!1s0x91c022372c33fa25%3A0xde9b8002d4e5b8d0!2sPlaza%20Francisco%20Bolognesi%2C%20FCWF%2BC2X%2C%20Nauta%2016300!3m2!1d-4.5038766!2d-73.57738069999999!5e0!3m2!1ses!2spe!4v1785897299767!5m2!1ses!2spe"
     },
     'bolognesi': {
         siguienteNombre: "📍 Siguiente parada: Playa del Amor (Calle Diego Arturo con San Jose)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3977.5126125012084!2d-73.58265892594345!3d-4.501176647589526!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c022372c33fa25%3A0xde9b8002d4e5b8d0!2sPlaza%20Francisco%20Bolognesi%2C%20FCWF%2BC2X%2C%20Nauta%2016300!3m2!1d-4.5038766!2d-73.57738069999999!4m5!1s0x91c022357351b59d%3A0x93764620fbb8358f!2sPLAYA%20DEL%20AMOR%2C%20Nauta%2016300!3m2!1d-4.4982185!2d-73.58153039999999!5e0!3m2!1ses!2spe!4v1785897398930!5m2!1ses!2spe"
     },
     'playa': {
         siguienteNombre: "📍 Siguiente parada: Santuario Virgen Rosa Mistica (CENCCA)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d15910.079952264952!2d-73.5813450672859!3d-4.499826835885302!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c022357351b59d%3A0x93764620fbb8358f!2sPLAYA%20DEL%20AMOR%2C%20Nauta%2016300!3m2!1d-4.4982185!2d-73.58153039999999!4m5!1s0x91c023d5623529e5%3A0xbec5261b6c557efa!2sSANTUARIO%20VIRGEN%20ROSA%20MISTICA%2C%20GC4R%2BC46%2C%20Nauta%2016300!3m2!1d-4.4939599!2d-73.55974549999999!5e0!3m2!1ses!2spe!4v1785897484736!5m2!1ses!2spe"
     },
     'mistica': {
         siguienteNombre: "📍 Siguiente parada: Balneario Zaragoza (Km 5 Carretera Nauta-Iquitos)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d31820.900567393488!2d-73.60007840414517!3d-4.482848626683775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c023d5623529e5%3A0xbec5261b6c557efa!2sSANTUARIO%20VIRGEN%20ROSA%20MISTICA%2C%20GC4R%2BC46%2C%20Nauta%2016300!3m2!1d-4.4939599!2d-73.55974549999999!4m5!1s0x91c02398368f3aef%3A0x2544f10a965e8053!2sBalneario%20Zaragoza%2C%20Carr.%20Iquitos-Nauta%20500%2C%20Nauta%2016300!3m2!1d-4.4744458!2d-73.5960827!5e0!3m2!1ses!2spe!4v1785897579238!5m2!1ses!2spe"
     },
     'zaragoza': {
         siguienteNombre: "🏁 ¡Felicidades! Has completado el circuito turístico de Nauta (Retorno a la Plaza)",
-        embedUrl: "https://www.google.com/maps/embed?pb=..."
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d31820.551281898537!2d-73.6080562541393!3d-4.490863276641761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c02398368f3aef%3A0x2544f10a965e8053!2sBalneario%20Zaragoza%2C%20Carr.%20Iquitos-Nauta%20500%2C%20Nauta%2016300!3m2!1d-4.4744458!2d-73.5960827!4m5!1s0x91c0223a12e199b9%3A0x8bd2ed680bf5bf7c!2sPlaza%20De%20Armas%20De%20Nauta%2C%20FCVF%2B9RF%2C%20C.%20Diego%20Rodriguez%2C%20Nauta%2016300!3m2!1d-4.5065662!2d-73.5754512!5e0!3m2!1ses!2spe!4v1785897648425!5m2!1ses!2spe"
     }
 };
 
