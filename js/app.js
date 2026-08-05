@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GUIANAUTA - Sistema Integrado: Google Sheets + Lógica QR + IA Real + Pasaporte + Mapas + Galería
+   GUIANAUTA - Sistema Integrado: Google Sheets + Lógica QR + IA Real + Pasaporte + Mapas + Galería + Modal
    ========================================================================== */
 
 // 1. CONFIGURACIÓN
@@ -88,6 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btnLeer = document.getElementById("btn-leer-texto");
     if (btnLeer) btnLeer.addEventListener("click", hablarReseñaHistorica);
+
+    // Inicialización del Modal para la Galería
+    inicializarModalGaleria();
 });
 
 function normalizarTexto(texto) {
@@ -390,6 +393,43 @@ function actualizarMapaRuta(idMonumentoActual) {
     }
 }
 
+// 8. MÓDULO VISOR MODAL (Exclusivo para la Galería)
+function inicializarModalGaleria() {
+    const modalVisor = document.getElementById("modal-visor");
+    const imagenAmpliada = document.getElementById("imagen-ampliada");
+    const btnCerrar = document.querySelector(".cerrar-modal") || document.getElementById("btn-cerrar");
+
+    function habilitarVisorGaleria(elementoImg) {
+        if (elementoImg) {
+            elementoImg.addEventListener("click", () => {
+                if (elementoImg.src && !elementoImg.src.includes("placeholder")) {
+                    imagenAmpliada.src = elementoImg.src;
+                    modalVisor.classList.add("activo");
+                }
+            });
+        }
+    }
+
+    // Escucha eventos SOLO en las 4 fotos de la Galería
+    [1, 2, 3, 4].forEach(num => {
+        habilitarVisorGaleria(document.getElementById(`galeria-${num}`));
+    });
+
+    if (btnCerrar) {
+        btnCerrar.addEventListener("click", () => {
+            modalVisor.classList.remove("activo");
+        });
+    }
+
+    if (modalVisor) {
+        modalVisor.addEventListener("click", (e) => {
+            if (e.target === modalVisor) {
+                modalVisor.classList.remove("activo");
+            }
+        });
+    }
+}
+
 // FUNCIONES AUXILIARES DE INTERFAZ
 function mostrarMensajePantalla(titulo, mensaje) {
     const tituloEl = document.getElementById("monumento-titulo");
@@ -415,7 +455,7 @@ function agregarMensajeAlChat(texto, claseEstilo) {
     return idUnico;
 }
 
-// 8. MÓDULO TEXT-TO-SPEECH
+// 9. MÓDULO TEXT-TO-SPEECH
 function hablarReseñaHistorica() {
     const descEl = document.getElementById("monumento-descripcion");
     if (!descEl) return;
@@ -433,7 +473,6 @@ function hablarReseñaHistorica() {
     }
 
     const lectura = new SpeechSynthesisUtterance(textoParaLeer);
-    // Asigna el idioma en función de la traducción actual
     lectura.lang = enIngles ? 'en-US' : 'es-ES'; 
     lectura.rate = 1.0; 
     lectura.pitch = 1.0; 
