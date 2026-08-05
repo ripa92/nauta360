@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnLeer = document.getElementById("btn-leer-texto");
     if (btnLeer) btnLeer.addEventListener("click", hablarReseñaHistorica);
 
-    // Inicialización del Modal para la Galería
+    // Inicialización del Modal para la Galería (Corregido con IDs exactos del HTML)
     inicializarModalGaleria();
 });
 
@@ -295,11 +295,6 @@ function actualizarVisualizacionPasaporte() {
     if (!contenedor || !textoProgreso) return; 
 
     contenedor.innerHTML = "";
-    contenedor.style.display = "flex";
-    contenedor.style.justifyContent = "space-around";
-    contenedor.style.alignItems = "flex-start";
-    contenedor.style.gap = "10px";
-    contenedor.style.flexWrap = "wrap";
 
     RUTA_MONUMENTOS.forEach(monumentoId => {
         const infoMonumento = DATOS_PASAPORTE[monumentoId] || { nombre: monumentoId, imagen: '' };
@@ -393,42 +388,36 @@ function actualizarMapaRuta(idMonumentoActual) {
     }
 }
 
-// 8. MÓDULO VISOR MODAL (Exclusivo para la Galería)
+// 8. MÓDULO VISOR MODAL (Para los IDs id="modal-imagen" e id="imagen-ampliada" de tu HTML)
 function inicializarModalGaleria() {
-    const modalVisor = document.getElementById("modal-visor");
+    const modalVisor = document.getElementById("modal-imagen");
     const imagenAmpliada = document.getElementById("imagen-ampliada");
-    const btnCerrar = document.querySelector(".cerrar-modal") || document.getElementById("btn-cerrar");
 
     function habilitarVisorGaleria(elementoImg) {
         if (elementoImg) {
-            elementoImg.addEventListener("click", () => {
+            elementoImg.addEventListener("click", (e) => {
+                e.stopPropagation(); 
                 if (elementoImg.src && !elementoImg.src.includes("placeholder")) {
                     imagenAmpliada.src = elementoImg.src;
-                    modalVisor.classList.add("activo");
+                    modalVisor.style.display = "block";
                 }
             });
         }
     }
 
-    // Escucha eventos SOLO en las 4 fotos de la Galería
+    // Asigna el evento click a las 4 fotos de la Galería (galeria-1, galeria-2, galeria-3, galeria-4)
     [1, 2, 3, 4].forEach(num => {
         habilitarVisorGaleria(document.getElementById(`galeria-${num}`));
     });
-
-    if (btnCerrar) {
-        btnCerrar.addEventListener("click", () => {
-            modalVisor.classList.remove("activo");
-        });
-    }
-
-    if (modalVisor) {
-        modalVisor.addEventListener("click", (e) => {
-            if (e.target === modalVisor) {
-                modalVisor.classList.remove("activo");
-            }
-        });
-    }
 }
+
+// Función global requerida para cerrar el modal al hacer clic en el fondo o en la 'X'
+window.cerrarModalImagen = function() {
+    const modalVisor = document.getElementById("modal-imagen");
+    if (modalVisor) {
+        modalVisor.style.display = "none";
+    }
+};
 
 // FUNCIONES AUXILIARES DE INTERFAZ
 function mostrarMensajePantalla(titulo, mensaje) {
