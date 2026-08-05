@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GUIANAUTA - Sistema Integrado: Google Sheets + Lógica QR + IA Real + Pasaporte + Mapas
+   GUIANAUTA - Sistema Integrado: Google Sheets + Lógica QR + IA Real + Pasaporte + Mapas + Galería
    ========================================================================== */
 
 // 1. CONFIGURACIÓN
@@ -98,7 +98,7 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// 2. REGISTRO DE PASAPORTE (FUNCIÓN AGREGADA)
+// 2. REGISTRO DE PASAPORTE
 function registrarVisitaPasaporte(idMonumento) {
     let sellosObtenidos = [];
     try {
@@ -134,7 +134,12 @@ async function cargarYMostrarMonumento(idBuscado) {
                         nombre: fila.c[1] ? fila.c[1].v : "Monumento sin nombre",
                         descripcion: fila.c[2] ? fila.c[2].v : "Sin descripción disponible.",
                         url_imagen: fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg",
-                        url_audio: fila.c[4] ? fila.c[4].v : ""
+                        url_audio: fila.c[4] ? fila.c[4].v : "",
+                        // Lectura de URLs para la galería desde Google Sheets (Columnas F, G, H, I -> Índices 5, 6, 7, 8)
+                        foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
+                        foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
+                        foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg"),
+                        foto4: (fila.c[8] && fila.c[8].v) ? fila.c[8].v : (fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg")
                     };
                 }
             }
@@ -146,6 +151,17 @@ async function cargarYMostrarMonumento(idBuscado) {
             
             const imgElemento = document.getElementById("monumento-imagen");
             if (imgElemento) imgElemento.src = monumentoEncontrado.url_imagen;
+
+            // --- CARGA DINÁMICA DE LA GALERÍA DE FOTOS ---
+            const g1 = document.getElementById("galeria-1");
+            const g2 = document.getElementById("galeria-2");
+            const g3 = document.getElementById("galeria-3");
+            const g4 = document.getElementById("galeria-4");
+
+            if (g1) g1.src = monumentoEncontrado.foto1;
+            if (g2) g2.src = monumentoEncontrado.foto2;
+            if (g3) g3.src = monumentoEncontrado.foto3;
+            if (g4) g4.src = monumentoEncontrado.foto4;
 
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
