@@ -27,12 +27,36 @@ const DATOS_PASAPORTE = {
 // Diccionario con rutas peatonales exactas usando los mismos IDs que RUTA_MONUMENTOS
 const MAPAS_RELEVANTES = {
     'plaza': {
-        siguienteNombre: "📍 Siguiente parada: Teatro Ucamara (Caminando por Jr. Tarapacá)",
-        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.203657784013!2d-73.57866752520638!3d-4.506542795467657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b6fa3500a4b%3A0xc3da0b75a176cc38!2sPlaza%20de%20Armas%20de%20Nauta%2C%20Nauta!3m2!1d-4.5055047!2d-73.5762031!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!5e0!3m2!1ses-419!2spe!4v1716584200000!5m2!1ses-419!2spe"
+        siguienteNombre: "📍 Siguiente parada: Teatro Ucamara (Caminando frente a la plaza)",
+        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3977.4839529038686!2d-73.57793617594335!3d-4.506417847622853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91c0223a12e199b9%3A0x8bd2ed680bf5bf7c!2sPlaza%20De%20Armas%20De%20Nauta%2C%20FCVF%2B9RF%2C%20C.%20Diego%20Rodriguez%2C%20Nauta%2016300!3m2!1d-4.5065662!2d-73.5754512!4m5!1s0x91c0223a6e467e8b%3A0xc174aea122a2c29b!2sTEATRO%20UCAMARA%2C%20FCVF%2B9XC%2C%20Nauta%2016300!3m2!1d-4.506573899999999!2d-73.5751126!5e0!3m2!1ses!2spe!4v1785896490603!5m2!1ses!2spe"
     },
     'ucamara': {
-        siguienteNombre: "📍 Siguiente parada: Iglesia San Felipe y santiago (Caminando por Jr. Lima)",
-        embedUrl: "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3981.198357784013!2d-73.57900002520638!3d-4.508500000000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x91ea6b677b5bd6e5%3A0xa14bf9828469d4be!2sLago%20Sapi%20Sapi%2C%20Nauta%2016501!3m2!1d-4.5073059!2d-73.5794829!4m5!1s0x91ea6b66fa5a5555%3A0x5555555555555555!2sMercado%20Central%20De%20Nauta%2C%20Nauta!3m2!1d-4.5090000!2d-73.5765000!5e0!3m2!1ses-419!2spe!4v1716584300000!5m2!1ses-419!2spe"
+        siguienteNombre: "📍 Siguiente parada: Iglesia San Felipe y San Tiago (Caminando fente a la plaza)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'parroquia': {
+        siguienteNombre: "📍 Siguiente parada: Laguna Sapi Sapi (Caminando por Jr. Manuel Pacaya)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'sapi': {
+        siguienteNombre: "📍 Siguiente parada: Plaza Bolognesi (Caminando fente al Sapi Sapi)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'bolognesi': {
+        siguienteNombre: "📍 Siguiente parada: Playa del Amor (Calle Diego Arturo con San Jose)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'playa': {
+        siguienteNombre: "📍 Siguiente parada: Santuario Virgen Rosa Mistica (CENCCA)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'mistica': {
+        siguienteNombre: "📍 Siguiente parada: Balneario Zaragoza (Km 5 Carretera Nauta-Iquitos)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
+    },
+    'zaragoza': {
+        siguienteNombre: "🏁 ¡Felicidades! Has completado el circuito turístico de Nauta (Retorno a la Plaza)",
+        embedUrl: "https://www.google.com/maps/embed?pb=..."
     }
 };
 
