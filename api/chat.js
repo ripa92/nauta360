@@ -19,14 +19,16 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+        // Endpoint v1 con el alias estable 'gemini-1.5-flash'
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
 
         const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
 Lugar o monumento actual en pantalla: "${contexto || 'Nauta, Loreto'}".
 
 INSTRUCCIONES IMPORTANTES:
-1. Responde a la pregunta del usuario utilizando todo tu conocimiento sobre la historia real de Nauta, Loreto y el monumento en cuestión (fechas, orígenes de nombres como Ucamara, referencias geográficas y locales).
-2. Responde de forma muy amable, entusiasta y concisa (máximo 3 o 4 líneas).`;
+1. Responde a la pregunta del usuario utilizando todo tu conocimiento histórico sobre Nauta y Loreto (origen de nombres como Ucamara = Ucayali + Marañón, fechas, ubicaciones y detalles locales).
+2. Responde de forma muy amable, entusiasta y concisa (máximo 3 o 4 líneas).
+3. Da información precisa de la ciudad de Nauta.`;
 
         const response = await fetch(url, {
             method: "POST",
