@@ -225,6 +225,9 @@ async function cargarYMostrarMonumento(idBuscado) {
 }
 
 // 4. CONEXIÓN CON IA (OpenAI)
+// Asegúrate de que tu clave esté pegada arriba:
+// const OPENAI_API_KEY = 'sk-proj-...';
+
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
     if (!inputPregunta) return;
@@ -240,40 +243,42 @@ async function manejarPreguntaIA() {
     try {
         const contextoHistorico = window.historiaMonumentoActual || "un monumento histórico de Nauta, Loreto.";
 
+        // Cambiamos el modelo a gpt-3.5-turbo o gpt-4o-mini
         const respuestaIA = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${OPENAI_API_KEY}`
+                "Authorization": `Bearer ${OPENAI_API_KEY.trim()}`
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
+                model: "gpt-3.5-turbo",
                 messages: [
                     { 
                         role: "system", 
-                        content: `Eres un guía turístico experto de la ciudad de Nauta en Loreto, Perú. Estás frente al monumento histórico que tiene la siguiente descripción real: "${contextoHistorico}". Responde de manera muy amable, entusiasta y concisa (máximo 3 líneas). Si el usuario te pregunta algo que no tenga nada que ver con el turismo, la historia local o este monumento, recuérdale amablemente que estás aquí para guiarlo en su recorrido por Nauta.` 
+                        content: `Eres un guía turístico experto de la ciudad de Nauta en Loreto, Perú. Estás frente al monumento histórico que tiene la siguiente descripción real: "${contextoHistorico}". Responde de manera muy amable, entusiasta y concisa (máximo 3 líneas).` 
                     },
                     { role: "user", content: preguntaTexto }
-                ],
-                temperature: 0.7
+                ]
             })
         });
 
         const datosIA = await respuestaIA.json();
-        
+
         if (respuestaIA.ok && datosIA.choices && datosIA.choices[0]) {
             const respuestaTexto = datosIA.choices[0].message.content;
             document.getElementById(idMensajeEspera).innerText = respuestaTexto;
         } else {
-            // Si la API responde con un error de la cuenta/key, se muestra en consola y pantalla
             console.error("Detalle error OpenAI:", datosIA);
-            const msjError = datosIA.error ? datosIA.error.message : "Error al procesar la consulta.";
-            document.getElementById(idMensajeEspera).innerText = `⚠️ Error API: ${msjError}`;
+            if (datosIA.error) {
+                document.getElementById(idMensajeEspera).innerText = `⚠️ OpenAI Error (${datosIA.error.code || '401'}): ${datosIA.error.message}`;
+            } else {
+                document.getElementById(idMensajeEspera).innerText = "Error de autorización con la clave de OpenAI.";
+            }
         }
 
     } catch (error) {
         console.error("Error OpenAI API:", error);
-        document.getElementById(idMensajeEspera).innerText = "Disculpa, mi señal en la selva falló un momento. Por favor verifica tu conexión a internet.";
+        document.getElementById(idMensajeEspera).innerText = "Error de red/CORS al conectar con OpenAI. Verifica tu conexión.";
     }
 }
 
