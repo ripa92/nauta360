@@ -4,7 +4,8 @@
 
 // 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-const OPENAI_API_KEY = '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'; 
+// REEMPLAZA LA SIGUIENTE LÍNEA CON TU NUEVA API KEY RECIÉN CREADA EN OPENAI:
+const OPENAI_API_KEY = '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'; 
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
@@ -99,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function ocultarSeccionesSecundarias(ocultar) {
     const estadoDisplay = ocultar ? "none" : "block";
 
-    // Ocultar/Mostrar Audio, Galería, Chat IA, Pasaporte y Mapa
     const seccionAudio = document.querySelector(".audio-seccion");
     const seccionGaleria = document.querySelector(".galeria-seccion") || document.getElementById("galeria-1")?.closest("section");
     const seccionChat = document.querySelector(".chat-seccion") || document.getElementById("chat-historial")?.closest("section");
@@ -120,7 +120,7 @@ function mostrarMensajeBienvenida() {
 
     if (tituloEl) tituloEl.innerText = "¡Bienvenido a GuiaNauta 360!";
     if (descEl) descEl.innerText = "Explora la riqueza histórica de Nauta. Escanea los códigos QR ubicados en los monumentos de la ciudad para activar tu guía interactivo, audio-relatos, mapas y tu pasaporte digital de turista.";
-    if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"; // Imagen representativa de Nauta
+    if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"; 
 }
 
 function normalizarTexto(texto) {
@@ -235,7 +235,7 @@ async function manejarPreguntaIA() {
     agregarMensajeAlChat(preguntaTexto, "usuario-mensaje");
     inputPregunta.value = ""; 
 
-    const idMensajeEspera = agregarMensajeAlChat("Escribiendo...", "bot-mensaje");
+    const idMensajeEspera = agregarMensajeAlChat("Pensando respuesta...", "bot-mensaje");
 
     try {
         const contextoHistorico = window.historiaMonumentoActual || "un monumento histórico de Nauta, Loreto.";
@@ -261,16 +261,19 @@ async function manejarPreguntaIA() {
 
         const datosIA = await respuestaIA.json();
         
-        if (datosIA.choices && datosIA.choices[0]) {
+        if (respuestaIA.ok && datosIA.choices && datosIA.choices[0]) {
             const respuestaTexto = datosIA.choices[0].message.content;
             document.getElementById(idMensajeEspera).innerText = respuestaTexto;
         } else {
-            throw new Error("Respuesta de IA no válida");
+            // Si la API responde con un error de la cuenta/key, se muestra en consola y pantalla
+            console.error("Detalle error OpenAI:", datosIA);
+            const msjError = datosIA.error ? datosIA.error.message : "Error al procesar la consulta.";
+            document.getElementById(idMensajeEspera).innerText = `⚠️ Error API: ${msjError}`;
         }
 
     } catch (error) {
         console.error("Error OpenAI API:", error);
-        document.getElementById(idMensajeEspera).innerText = "Disculpa, mi señal en la selva falló un momento. ¿Podrías repetirme la pregunta?";
+        document.getElementById(idMensajeEspera).innerText = "Disculpa, mi señal en la selva falló un momento. Por favor verifica tu conexión a internet.";
     }
 }
 
