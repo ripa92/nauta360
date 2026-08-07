@@ -225,9 +225,6 @@ async function cargarYMostrarMonumento(idBuscado) {
 }
 
 // 4. CONEXIÓN CON IA (OpenAI)
-// Asegúrate de que tu clave esté pegada arriba:
-// const OPENAI_API_KEY = 'sk-proj-...';
-
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
     if (!inputPregunta) return;
@@ -243,7 +240,6 @@ async function manejarPreguntaIA() {
     try {
         const contextoHistorico = window.historiaMonumentoActual || "un monumento histórico de Nauta, Loreto.";
 
-        // Cambiamos el modelo a gpt-3.5-turbo o gpt-4o-mini
         const respuestaIA = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -262,23 +258,32 @@ async function manejarPreguntaIA() {
             })
         });
 
+        if (!respuestaIA.ok) {
+            const errorData = await respuestaIA.json().catch(() => null);
+            console.error("Detalle del error de OpenAI:", errorData);
+            
+            if (respuestaIA.status === 401) {
+                document.getElementById(idMensajeEspera).innerText = "Error 401: Clave no autorizada. Revisa que tu API Key sea correcta en OpenAI.";
+            } else if (respuestaIA.status === 429) {
+                document.getElementById(idMensajeEspera).innerText = "Error 429: Se agotó el límite de solicitudes o falta activar Billing.";
+            } else {
+                document.getElementById(idMensajeEspera).innerText = `Error (${respuestaIA.status}) al conectar con OpenAI.`;
+            }
+            return;
+        }
+
         const datosIA = await respuestaIA.json();
 
-        if (respuestaIA.ok && datosIA.choices && datosIA.choices[0]) {
+        if (datosIA.choices && datosIA.choices[0] && datosIA.choices[0].message) {
             const respuestaTexto = datosIA.choices[0].message.content;
             document.getElementById(idMensajeEspera).innerText = respuestaTexto;
         } else {
-            console.error("Detalle error OpenAI:", datosIA);
-            if (datosIA.error) {
-                document.getElementById(idMensajeEspera).innerText = `⚠️ OpenAI Error (${datosIA.error.code || '401'}): ${datosIA.error.message}`;
-            } else {
-                document.getElementById(idMensajeEspera).innerText = "Error de autorización con la clave de OpenAI.";
-            }
+            document.getElementById(idMensajeEspera).innerText = "Respuesta vacía recibida de la IA.";
         }
 
     } catch (error) {
-        console.error("Error OpenAI API:", error);
-        document.getElementById(idMensajeEspera).innerText = "Error de red/CORS al conectar con OpenAI. Verifica tu conexión.";
+        console.error("Error de red o bloqueo de CORS:", error);
+        document.getElementById(idMensajeEspera).innerText = "Error de red/CORS al conectar con OpenAI. El navegador o tu red bloqueó la petición.";
     }
 }
 
