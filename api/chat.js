@@ -19,7 +19,8 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`;
+        // URL actualizada con el modelo estable gemini-1.5-flash
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
 
         const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
 Lugar o monumento actual en pantalla: "${contexto || 'Nauta, Loreto'}".
@@ -44,7 +45,6 @@ INSTRUCCIONES IMPORTANTES:
                         ]
                     }
                 ],
-                // Habilitamos la herramienta de Búsqueda Web en tiempo real de Google
                 tools: [
                     {
                         google_search: {}
