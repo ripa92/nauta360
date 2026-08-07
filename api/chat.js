@@ -13,55 +13,44 @@ export default async function handler(req, res) {
 
     try {
         const { pregunta, contexto } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.OPENAI_API_KEY;
 
         if (!apiKey) {
-            return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
+            return res.status(500).json({ error: 'Falta configurar OPENAI_API_KEY en Vercel' });
         }
 
-        // Modelo actual vigente en la API de Google Gemini
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey.trim()}`;
+        const promptSistema = `Eres un guía turístico e historiador experto y nativo de la ciudad de Nauta en Loreto, Perú.
+El turista está frente al siguiente monumento/lugar: "${contexto || 'Nauta, Loreto'}".
 
-        const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
-Lugar o monumento actual que el usuario está viendo en pantalla: "${contexto || 'Nauta, Loreto'}".
-
-INSTRUCCIONES IMPORTANTES:
-1. Responde a la pregunta del usuario utilizando todo tu conocimiento sobre la historia real de Nauta, la región Loreto y sus monumentos (fechas de creación, origen de nombres como Ucamara = Ucayali + Marañón, referencias geográficas y locales).
-2. Si el dato no está en la pantalla, utiliza tu conocimiento general de Loreto para dar respuestas precisas de fechas, nombres y lugares cercanos.
+REGLAS DE RESPUESTA:
+1. No te limites solo al texto del contexto. Usa todo tu conocimiento histórico general sobre la ciudad de Nauta y la región Loreto.
+2. Si te preguntan por orígenes de nombres (ejemplo: Ucamara = Ucayali + Marañón), fechas de creación, historia de la zona o lugares cercanos donde comer, da la respuesta histórica/geográfica exacta de Nauta.
 3. Sé muy amable, entusiasta y conciso (máximo 3 o 4 líneas).`;
 
-        const response = await fetch(url, {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey.trim()}`
             },
             body: JSON.stringify({
-                contents: [
-                    {
-                        role: "user",
-                        parts: [
-                            { text: promptSistema },
-                            { text: `Pregunta del usuario: ${pregunta}` }
-                        ]
-                    }
-                ]
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: promptSistema },
+                    { role: "user", content: pregunta }
+                ],
+                temperature: 0.7
             })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            console.error("Error de Gemini API:", data);
-            return res.status(response.status).json({ error: data.error?.message || "Error en la API de Gemini" });
+            console.error("Error de OpenAI API:", data);
+            return res.status(response.status).json({ error: data.error?.message || "Error en la API de OpenAI" });
         }
 
-        const candidato = data.candidates && data.candidates[0];
-        if (candidato && candidato.content && candidato.content.parts && candidato.content.parts[0]) {
-            const respuestaTexto = candidato.content.parts[0].text;
-            return res.status(200).json({ respuesta: respuestaTexto });
-        } else {
-            return res.status(500).json({ error: "No se pudo obtener una respuesta válida." });
-        }
+        return res.status(200).json({ respuesta: data.choices[0].message.content });
 
     } catch (error) {
         console.error("Error en servidor:", error);
