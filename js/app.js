@@ -235,10 +235,10 @@ async function manejarPreguntaIA() {
     agregarMensajeAlChat(preguntaTexto, "usuario-mensaje");
     inputPregunta.value = ""; 
 
-    const idMensajeEspera = agregarMensajeAlChat("Pensando respuesta...", "bot-mensaje");
+    const idMensajeEspera = agregarMensajeAlChat("Buscando información...", "bot-mensaje");
 
     try {
-        const contextoHistorico = window.historiaMonumentoActual || "un monumento histórico de Nauta, Loreto.";
+        const contextoHistorico = window.historiaMonumentoActual || "un monumento o lugar de Nauta, Loreto.";
 
         const respuestaIA = await fetch("/api/chat", {
             method: "POST",
@@ -253,18 +253,17 @@ async function manejarPreguntaIA() {
 
         const datosIA = await respuestaIA.json();
 
-        if (respuestaIA.ok && datosIA.choices && datosIA.choices[0]) {
-            const respuestaTexto = datosIA.choices[0].message.content;
-            document.getElementById(idMensajeEspera).innerText = respuestaTexto;
+        if (respuestaIA.ok && datosIA.respuesta) {
+            document.getElementById(idMensajeEspera).innerText = datosIA.respuesta;
         } else {
-            console.error("Detalle de error Vercel/OpenAI:", datosIA);
-            const msjError = datosIA.error ? (datosIA.error.message || datosIA.error) : "Error en el servidor.";
-            document.getElementById(idMensajeEspera).innerText = `⚠️ Error: ${msjError}`;
+            console.error("Error del backend:", datosIA);
+            const msjError = datosIA.error || "Error al procesar la respuesta.";
+            document.getElementById(idMensajeEspera).innerText = `⚠️ ${msjError}`;
         }
 
     } catch (error) {
-        console.error("Error al conectar con la API:", error);
-        document.getElementById(idMensajeEspera).innerText = "Error de conexión con el servidor de la aplicación.";
+        console.error("Error de conexión:", error);
+        document.getElementById(idMensajeEspera).innerText = "Error de conexión con el servidor.";
     }
 }
 
