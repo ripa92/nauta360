@@ -4,7 +4,7 @@
 
 // 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-const OPENAI_API_KEY = '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'; 
+const OPENAI_API_KEY = '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'; 
 
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
