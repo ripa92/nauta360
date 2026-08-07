@@ -19,16 +19,16 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
         }
 
-        // Endpoint v1 con el alias estable 'gemini-1.5-flash'
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+        // Se usa el alias oficial 'gemini-1.5-flash-latest' en la API v1beta
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey.trim()}`;
 
-        const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
-Lugar o monumento actual en pantalla: "${contexto || 'Nauta, Loreto'}".
+        const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en la región Loreto, Perú.
+Lugar o monumento actual que el usuario está viendo: "${contexto || 'Nauta, Loreto'}".
 
-INSTRUCCIONES IMPORTANTES:
-1. Responde a la pregunta del usuario utilizando todo tu conocimiento histórico sobre Nauta y Loreto (origen de nombres como Ucamara = Ucayali + Marañón, fechas, ubicaciones y detalles locales).
-2. Responde de forma muy amable, entusiasta y concisa (máximo 3 o 4 líneas).
-3. Da información precisa de la ciudad de Nauta.`;
+INSTRUCCIONES:
+1. Responde a la pregunta del usuario utilizando todo tu conocimiento sobre la historia real de Nauta, Loreto y sus monumentos (fechas de creación, origen de nombres como Ucamara, referencias históricas y lugares o restaurantes cercanos).
+2. Si el dato exacto no está explícito en la pantalla, recurre a tu conocimiento de la historia local de Loreto para dar una respuesta precisa.
+3. Sé muy amable, entusiasta y conciso (máximo 3 o 4 líneas).`;
 
         const response = await fetch(url, {
             method: "POST",
@@ -60,7 +60,7 @@ INSTRUCCIONES IMPORTANTES:
             const respuestaTexto = candidato.content.parts[0].text;
             return res.status(200).json({ respuesta: respuestaTexto });
         } else {
-            return res.status(500).json({ error: "No se pudo obtener una respuesta válida." });
+            return res.status(500).json({ error: "No se pudo obtener una respuesta válida de Gemini." });
         }
 
     } catch (error) {
