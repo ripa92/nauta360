@@ -19,7 +19,7 @@ const DATOS_PASAPORTE = {
     'sapi': { nombre: 'Laguna Sapi Sapi', imagen: 'https://lh3.googleusercontent.com/d/16LIiyFPN8aat-3PLNBjFPcVmfi5I1JbK' },
     'bolognesi': { nombre: 'Plaza Bolognesi', imagen: 'https://lh3.googleusercontent.com/d/1RAOhmHW2wtEYHqxA1vOuR9RV9fGkf5cl' },
     'playa': { nombre: 'Playa del Amor', imagen: 'https://lh3.googleusercontent.com/d/1mbYuGsz2dM6hB-lcpe5oq_9qFi5ECLSh' },
-    'mistica': { nombre: 'Santuario Rosa Mística', imagen: 'https://lh3.googleusercontent.com/d/1GrYJ5Z1ZuoGFDy2ivm2NXw8TKKmD_4rX' },
+    'mistica': { nombre: 'Santuario Rosa Mística', imagen: 'https://lh3.googleusercontent.com/d/1nndm9v4pgy7B3HD3qtgSgiB5JRvu4Xxe' },
     'zaragoza': { nombre: 'Balneario Zaragoza', imagen: 'https://lh3.googleusercontent.com/d/15H_u-r9Y4GN9NdddIdIiVgcm3YOzpMgC' }
 };
 
