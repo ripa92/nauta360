@@ -19,8 +19,8 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
         }
 
-        // URL actualizada con el modelo estable gemini-1.5-flash
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+        // Modelo gemini-2.0-flash habilitado para búsquedas web en tiempo real
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey.trim()}`;
 
         const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
 Lugar o monumento actual en pantalla: "${contexto || 'Nauta, Loreto'}".
