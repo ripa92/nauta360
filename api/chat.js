@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // Permitir solicitudes CORS desde cualquier origen
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,32 +13,42 @@ export default async function handler(req, res) {
 
     try {
         const { pregunta, contexto } = req.body;
-        const apiKey = process.env.OPENAI_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
-            return res.status(500).json({ error: 'Falta configurar OPENAI_API_KEY en Vercel' });
+            return res.status(500).json({ error: 'Falta configurar GEMINI_API_KEY en Vercel' });
         }
 
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`;
+
+        const promptSistema = `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú.
+Lugar o monumento actual en pantalla: "${contexto || 'Nauta, Loreto'}".
+
+INSTRUCCIONES IMPORTANTES:
+1. Usa la BÚSQUEDA WEB para encontrar datos exactos, fechas de creación, origen de nombres, restaurantes cercanos e historia real sobre el lugar por el que pregunta el usuario.
+2. Responde de forma muy amable, entusiasta y concisa (máximo 3 o 4 líneas).
+3. Da información precisa y real de Nauta y la región Loreto.`;
+
+        const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey.trim()}`
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: [
+                contents: [
                     {
-                        role: "system",
-                        content: `Eres un guía turístico e historiador experto de la ciudad de Nauta en Loreto, Perú. 
-El usuario está viendo un monumento con este contexto: "${contexto || 'Monumento en Nauta'}". 
-
-Instrucciones:
-1. Responde a la pregunta del usuario usando el contexto proporcionado Y TAMBIÉN todo tu conocimiento histórico general sobre Nauta, Loreto y sus monumentos.
-2. Si el usuario pregunta por años de creación, fechas, datos históricos o detalles que no están en el contexto, recurre a tu conocimiento general para darle la fecha o dato exacto.
-3. Sé amable, entusiasta y conciso (máximo 3 o 4 líneas).`
-                    },
-                    { role: "user", content: pregunta }
+                        role: "user",
+                        parts: [
+                            { text: promptSistema },
+                            { text: `Pregunta del usuario: ${pregunta}` }
+                        ]
+                    }
+                ],
+                // Habilitamos la herramienta de Búsqueda Web en tiempo real de Google
+                tools: [
+                    {
+                        google_search: {}
+                    }
                 ]
             })
         });
@@ -47,11 +56,20 @@ Instrucciones:
         const data = await response.json();
 
         if (!response.ok) {
-            return res.status(response.status).json(data);
+            console.error("Error de Gemini API:", data);
+            return res.status(response.status).json({ error: data.error?.message || "Error en la API de Gemini" });
         }
 
-        return res.status(200).json(data);
+        const candidato = data.candidates && data.candidates[0];
+        if (candidato && candidato.content && candidato.content.parts && candidato.content.parts[0]) {
+            const respuestaTexto = candidato.content.parts[0].text;
+            return res.status(200).json({ respuesta: respuestaTexto });
+        } else {
+            return res.status(500).json({ error: "No se pudo obtener una respuesta válida." });
+        }
+
     } catch (error) {
+        console.error("Error en servidor:", error);
         return res.status(500).json({ error: error.message });
     }
 }
