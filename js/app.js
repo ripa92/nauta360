@@ -240,50 +240,31 @@ async function manejarPreguntaIA() {
     try {
         const contextoHistorico = window.historiaMonumentoActual || "un monumento histórico de Nauta, Loreto.";
 
-        const respuestaIA = await fetch("https://api.openai.com/v1/chat/completions", {
+        const respuestaIA = await fetch("/api/chat", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${OPENAI_API_KEY.trim()}`
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    { 
-                        role: "system", 
-                        content: `Eres un guía turístico experto de la ciudad de Nauta en Loreto, Perú. Estás frente al monumento histórico que tiene la siguiente descripción real: "${contextoHistorico}". Responde de manera muy amable, entusiasta y concisa (máximo 3 líneas).` 
-                    },
-                    { role: "user", content: preguntaTexto }
-                ]
+                pregunta: preguntaTexto,
+                contexto: contextoHistorico
             })
         });
 
-        if (!respuestaIA.ok) {
-            const errorData = await respuestaIA.json().catch(() => null);
-            console.error("Detalle del error de OpenAI:", errorData);
-            
-            if (respuestaIA.status === 401) {
-                document.getElementById(idMensajeEspera).innerText = "Error 401: Clave no autorizada. Revisa que tu API Key sea correcta en OpenAI.";
-            } else if (respuestaIA.status === 429) {
-                document.getElementById(idMensajeEspera).innerText = "Error 429: Se agotó el límite de solicitudes o falta activar Billing.";
-            } else {
-                document.getElementById(idMensajeEspera).innerText = `Error (${respuestaIA.status}) al conectar con OpenAI.`;
-            }
-            return;
-        }
-
         const datosIA = await respuestaIA.json();
 
-        if (datosIA.choices && datosIA.choices[0] && datosIA.choices[0].message) {
+        if (respuestaIA.ok && datosIA.choices && datosIA.choices[0]) {
             const respuestaTexto = datosIA.choices[0].message.content;
             document.getElementById(idMensajeEspera).innerText = respuestaTexto;
         } else {
-            document.getElementById(idMensajeEspera).innerText = "Respuesta vacía recibida de la IA.";
+            console.error("Detalle de error Vercel/OpenAI:", datosIA);
+            const msjError = datosIA.error ? (datosIA.error.message || datosIA.error) : "Error en el servidor.";
+            document.getElementById(idMensajeEspera).innerText = `⚠️ Error: ${msjError}`;
         }
 
     } catch (error) {
-        console.error("Error de red o bloqueo de CORS:", error);
-        document.getElementById(idMensajeEspera).innerText = "Error de red/CORS al conectar con OpenAI. El navegador o tu red bloqueó la petición.";
+        console.error("Error al conectar con la API:", error);
+        document.getElementById(idMensajeEspera).innerText = "Error de conexión con el servidor de la aplicación.";
     }
 }
 
