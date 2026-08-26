@@ -118,9 +118,10 @@ function mostrarMensajeBienvenida() {
     const descEl = document.getElementById("monumento-descripcion");
     const imgEl = document.getElementById("monumento-imagen");
 
-    if (tituloEl) tituloEl.innerText = "¡Bienvenido a Nauta360! - Tu guia turistico por QR";
+    if (tituloEl) tituloEl.innerText = "¡Bienvenido a Nauta360!";
     if (descEl) descEl.innerText = "Explora la riqueza histórica de Nauta. Escanea los códigos QR ubicados en los monumentos de la ciudad para activar tu guía interactivo, audio-relatos, mapas y tu pasaporte digital de turista.";
-    if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"; 
+    //if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTS"; 
+   if (imgEl) imgEl.src = "p_principal.png"; 
 }
 
 function normalizarTexto(texto) {
