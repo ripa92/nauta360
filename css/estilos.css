@@ -340,18 +340,57 @@ header h1 span {
   text-transform: uppercase;
 }
 
-/* Carrusel deslizable */
+/* Sección contenedora: se limita estrictamente al ancho del celular/pantalla */
+.aliados-section {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 100%; /* Evita que desborde el ancho general de la web */
+  box-sizing: border-box; /* Incluye el padding en el ancho total */
+  overflow: hidden; /* Corta cualquier elemento saliente */
+}
+
+.aliados-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.badge-destacado {
+  background-color: #e5a117;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Contenedor del carrusel */
 .carrusel-container {
   display: flex;
   gap: 15px;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   padding-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: grab; /* Muestra la mano abierta en laptops */
+  user-select: none; /* Evita que el texto e imágenes se seleccionen al arrastrar */
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ocultar barra de desplazamiento visual */
+/* Cambia el cursor a "agarrado" mientras haces clic y arrastras */
+.carrusel-container:active {
+  cursor: grabbing;
+}
+
+/* Ocultar barra de desplazamiento */
 .carrusel-container::-webkit-scrollbar {
   display: none;
 }
@@ -360,10 +399,10 @@ header h1 span {
   scrollbar-width: none;
 }
 
-/* Tarjeta individual dentro del carrusel */
+/* Tarjeta individual */
 .tarjeta-comercio {
-  flex: 0 0 85%; /* Muestra un 85% de la tarjeta para indicar que hay otra al lado */
-  scroll-snap-align: center;
+  flex: 0 0 85%; /* En móviles ocupa 85% */
+  max-width: 320px; /* En laptops no se agrandará excesivamente */
   background: #f9f9f9;
   border-radius: 10px;
   padding: 12px;
@@ -376,11 +415,12 @@ header h1 span {
   height: 130px;
   object-fit: cover;
   border-radius: 8px;
+  pointer-events: none; /* Evita arrastrar la imagen en vez del carrusel */
 }
 
 .comercio-info h3 {
   margin: 8px 0 4px 0;
-  color: #0d5c3a; /* Verde selva */
+  color: #0d5c3a;
   font-size: 1rem;
 }
 
@@ -405,7 +445,7 @@ header h1 span {
 .btn-whatsapp-comercio {
   display: block;
   text-align: center;
-  background-color: #25d366; /* Verde WhatsApp */
+  background-color: #25d366;
   color: white;
   text-decoration: none;
   padding: 8px;
@@ -414,7 +454,6 @@ header h1 span {
   font-size: 0.85rem;
 }
 
-/* Indicadores de posición (Dots) */
 .carrusel-dots {
   display: flex;
   justify-content: center;
@@ -427,7 +466,7 @@ header h1 span {
   height: 8px;
   background-color: #ccc;
   border-radius: 50%;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, width 0.3s;
 }
 
 .dot.activo {
