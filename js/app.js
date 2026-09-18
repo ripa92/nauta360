@@ -501,3 +501,30 @@ function hablarReseñaHistorica() {
 
     window.speechSynthesis.speak(lectura);
 }
+// Arreglo de auspiciadores de Nauta
+const anunciantes = [
+  {
+    nombre: 'Recreo "La Tacacho"',
+    desc: 'Los mejores juanes y tacacho a la leña a 2 cuadras.',
+    cupon: '10% OFF en consumo',
+    imagen: 'img/tacacho.jpg',
+    whatsapp: '51999999999'
+  },
+  {
+    nombre: 'Hospedaje El Manguaré',
+    desc: 'Habitaciones con A/C y Wi-Fi en pleno centro.',
+    cupon: 'Check-out tardío gratis',
+    imagen: 'img/hospedaje.jpg',
+    whatsapp: '51988888888'
+  }
+];
+
+// Seleccionar un anuncio al azar cada vez que abren el QR
+function cargarPublicidad() {
+  const adAleatorio = anunciantes[Math.floor(Math.random() * anunciantes.length)];
+  
+  // Aquí se actualiza el DOM con los datos del anunciante
+  console.log("Anuncio cargado:", adAleatorio.nombre);
+}
+
+document.addEventListener("DOMContentLoaded", cargarPublicidad);
