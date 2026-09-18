@@ -501,35 +501,35 @@ function hablarReseñaHistorica() {
 
     window.speechSynthesis.speak(lectura);
 }
-// Lista de comercios auspiciadores (Pautas B2B)
-const listaAliados = [
-  {
-    id: 1,
-    nombre: 'Recreo "La Tacacho"',
-    desc: 'Los mejores juanes, tacacho a la leña y cecina de la ciudad.',
-    cupon: '🎁 10% OFF mostrando esta pantalla',
-    imagen: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500',
-    whatsapp: '51999999999'
-  },
-  {
-    id: 2,
-    nombre: 'Hospedaje "El Manguaré"',
-    desc: 'Habitaciones confortables con A/C, Wi-Fi y atención cálida.',
-    cupon: '🎁 Check-out tardío sin costo extra',
-    imagen: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
-    whatsapp: '51988888888'
-  },
-  {
-    id: 3,
-    nombre: 'Mototaxi Tour Nauta',
-    desc: 'Recorridos guiados por los principales puntos turísticos.',
-    cupon: '🎁 S/ 5 de descuento en tour completo',
-    imagen: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500',
-    whatsapp: '51977777777'
-  }
-];
+function habilitarArrastreLaptop(contenedor) {
+  let isDown = false;
+  let startX;
+  let scrollLeft;
 
-// Función para renderizar el carrusel
+  contenedor.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - contenedor.offsetLeft;
+    scrollLeft = contenedor.scrollLeft;
+  });
+
+  contenedor.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  contenedor.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  contenedor.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - contenedor.offsetLeft;
+    const walk = (x - startX) * 2; // Velocidad del desplazamiento
+    contenedor.scrollLeft = scrollLeft - walk;
+  });
+}
+
+// Actualiza tu función de inicialización para incluir esta mejora
 function inicializarCarrusel() {
   const contenedor = document.getElementById('carrusel-aliados');
   const contenedorDots = document.getElementById('carrusel-dots');
@@ -540,7 +540,6 @@ function inicializarCarrusel() {
   contenedorDots.innerHTML = '';
 
   listaAliados.forEach((comercio, index) => {
-    // Generar tarjeta HTML
     const tarjeta = document.createElement('div');
     tarjeta.className = 'tarjeta-comercio';
     tarjeta.innerHTML = `
@@ -558,13 +557,15 @@ function inicializarCarrusel() {
     `;
     contenedor.appendChild(tarjeta);
 
-    // Generar indicador de punto (Dot)
     const dot = document.createElement('div');
     dot.className = `dot ${index === 0 ? 'activo' : ''}`;
     contenedorDots.appendChild(dot);
   });
 
-  // Detectar desplazamiento para actualizar los indicadores (Dots)
+  // Activar evento de arrastre con el cursor para laptop
+  habilitarArrastreLaptop(contenedor);
+
+  // Actualizar los puntos (Dots)
   contenedor.addEventListener('scroll', () => {
     const scrollPosition = contenedor.scrollLeft;
     const cardWidth = contenedor.querySelector('.tarjeta-comercio').offsetWidth + 15;
@@ -581,5 +582,4 @@ function inicializarCarrusel() {
   });
 }
 
-// Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', inicializarCarrusel);
