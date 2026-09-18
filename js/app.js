@@ -14,21 +14,18 @@ const listaAliados = [
     {
         nombre: "Restaurante El Mirador",
         desc: "Platos típicos de la selva y pescados frescos frente al río.",
-        cupon: "🎁 10% OFF en Tacacho con Cecina",
         whatsapp: "51900000000",
         imagen: "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"
     },
     {
-        nombre: "Hospedaje La Selva",
-        desc: "Habitaciones cómodas con A/C a 2 cuadras de la plaza.",
-        cupon: "🎁 Desayuno amazónico gratis",
-        whatsapp: "51900000000",
+        nombre: "Transportes Jaen",
+        desc: "Modernos autos en la ruta Nauta - Iquitos.",
+         whatsapp: "51900000000",
         imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
     },
    {
         nombre: "Hospedaje Nauta IN",
         desc: "Habitaciones cómodas con A/C al frente de la plaza.",
-        cupon: "🎁 Desayuno amazónico gratis",
         whatsapp: "51900000000",
         imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
     }
