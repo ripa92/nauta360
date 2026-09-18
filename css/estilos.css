@@ -5,11 +5,11 @@
 
 /* 1. CONFIGURACIÓN GENERAL Y VARIABLES */
 :root {
-    --verde-selva: #0B6623;       /* Representa la exuberante vegetación de Nauta */
+    --verde-selva: #0B6623;       /* Vegetación de Nauta */
     --verde-hoja: #198754;        /* Acentos activos y botones exitosos */
-    --azul-rio: #1D4ED8;          /* El nacimiento del majestuoso río Amazonas */
-    --negro-carbon: #1A1A1A;      /* Textos principales con excelente contraste */
-    --gris-suave: #F3F4F6;        /* Fondos secundarios limpios */
+    --azul-rio: #1D4ED8;          /* Nacimiento del río Amazonas */
+    --negro-carbon: #1A1A1A;      /* Textos principales */
+    --gris-suave: #F3F4F6;        /* Fondos secundarios */
     --blanco-puro: #FFFFFF;       /* Contenedores y legibilidad */
     --oro-sol: #F59E0B;           /* Destacados, estrellas y elementos de IA */
     --fuente-principal: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
@@ -30,6 +30,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     padding-bottom: 20px;
+    overflow-x: hidden; /* Evita cualquier desbordamiento horizontal global */
 }
 
 /* 2. ENCABEZADO (Header) */
@@ -53,7 +54,7 @@ header h1 {
 }
 
 header h1 span {
-    color: var(--oro-sol); /* Resalta el "Nauta" en el logo */
+    color: var(--oro-sol);
 }
 
 #btn-idioma {
@@ -76,15 +77,17 @@ header h1 span {
 .hero-seccion {
     position: relative;
     width: 100%;
-    height: 40vh; /* Altura cinemática en celulares */
+    height: 40vh;
     background-color: #000;
     overflow: hidden;
 }
 
 #monumento-imagen {
     width: 100%;
-    height: 100%;
-    object-fit: cover; /* Se adapta dinámicamente sin estirarse */
+    height: 320px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
     opacity: 0.85;
 }
 
@@ -117,7 +120,7 @@ header h1 span {
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid var(--azul-rio); /* Evoca los ríos navegables */
+    border-left: 5px solid var(--azul-rio);
 }
 
 .audio-tarjeta p {
@@ -240,29 +243,139 @@ header h1 span {
 #btn-enviar-chat:hover {
     background-color: #D97706;
 }
-#monumento-imagen {
-    width: 100%;          /* Obliga a la imagen a ocupar todo el ancho disponible */
-    height: 320px;        /* Define una altura fija ideal para pantallas de celulares */
-    object-fit: cover;    /* ¡Aquí está la magia! Recorta y adapta la imagen proporcionalmente sin deformarla */
-    object-position: center; /* Asegura que el enfoque de la foto siempre sea la parte del centro */
+
+/* 7. SECCIÓN DE PUBLICIDAD / ALIADOS (CARRUSEL) */
+.aliados-section {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 0 20px 25px 20px; /* Alineado con las demás tarjetas */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    overflow: hidden; /* Encierra el carrusel para que no ensanche la pantalla */
+}
+
+.aliados-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.badge-destacado {
+    background-color: #e5a117;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.carrusel-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: grab;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.carrusel-container:active {
+    cursor: grabbing;
+}
+
+/* Ocultar scrollbars */
+.carrusel-container::-webkit-scrollbar {
+    display: none;
+}
+.carrusel-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Tarjeta individual */
+.tarjeta-comercio {
+    flex: 0 0 88%; /* Ajustado para dar un excelente ancho dentro del margen */
+    min-width: 88%;
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #eaeaea;
+    box-sizing: border-box;
+}
+
+.tarjeta-comercio img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.comercio-info h3 {
+    margin: 8px 0 4px 0;
+    color: #0d5c3a;
+    font-size: 1rem;
+}
+
+.comercio-info p {
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.cupon-beneficio {
+    background-color: #e0f2e9;
+    border: 1px dashed #0d5c3a;
+    color: #0d5c3a;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.btn-whatsapp-comercio {
     display: block;
+    text-align: center;
+    background-color: #25d366;
+    color: white;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
 }
 
-/* 7. OPTIMIZACIONES PARA PANTALLAS GRANDES (PC / LAPTOP) */
-@media (min-width: 768px) {
-    body {
-        align-items: center;
-    }
-    header, .hero-seccion, .audio-seccion, .info-seccion, .ia-chat-contenedor {
-        width: 100%;
-        max-width: 500px; /* Simula un teléfono celular en computadoras */
-    }
+.carrusel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
 }
-/* ==========================================================================
-   MODAL PARA AMPLIAR IMÁGENES DE LA GALERÍA
-   ========================================================================== */
 
-/* Cursor e indicador de clic EXCLUSIVO para la Galería de Fotos */
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: background-color 0.3s, width 0.3s;
+}
+
+.dot.activo {
+    background-color: #0d5c3a;
+    width: 18px;
+    border-radius: 4px;
+}
+
+/* 8. MODAL PARA AMPLIAR IMÁGENES DE LA GALERÍA */
 #galeria-1, #galeria-2, #galeria-3, #galeria-4 {
     cursor: pointer;
     transition: transform 0.2s ease, opacity 0.2s ease;
@@ -273,7 +386,6 @@ header h1 span {
     transform: scale(1.02);
 }
 
-/* Modal / Visor de Pantalla Completa */
 .modal-imagen {
     display: none;
     position: fixed;
@@ -313,164 +425,25 @@ header h1 span {
     z-index: 2501;
     user-select: none;
 }
-/* Contenedor general */
-.aliados-section {
-  background: #ffffff;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 20px 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
 
-.aliados-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
+/* 9. OPTIMIZACIONES PARA PANTALLAS GRANDES (PC / LAPTOP) */
+@media (min-width: 768px) {
+    body {
+        align-items: center;
+    }
+    header, 
+    .hero-seccion, 
+    .audio-seccion, 
+    .info-seccion, 
+    .ia-chat-contenedor, 
+    .aliados-section {
+        width: 100%;
+        max-width: 500px; /* Limita absolutamente todos los bloques al formato móvil */
+        box-sizing: border-box;
+    }
 
-.badge-destacado {
-  background-color: #e5a117; /* Dorado Nauta 360 */
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-/* Sección contenedora: se limita estrictamente al ancho del celular/pantalla */
-.aliados-section {
-  background: #ffffff;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 20px auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 100%; /* Evita que desborde el ancho general de la web */
-  box-sizing: border-box; /* Incluye el padding en el ancho total */
-  overflow: hidden; /* Corta cualquier elemento saliente */
-}
-
-.aliados-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.badge-destacado {
-  background-color: #e5a117;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-/* Contenedor del carrusel */
-.carrusel-container {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 10px;
-  width: 100%;
-  box-sizing: border-box;
-  cursor: grab; /* Muestra la mano abierta en laptops */
-  user-select: none; /* Evita que el texto e imágenes se seleccionen al arrastrar */
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Cambia el cursor a "agarrado" mientras haces clic y arrastras */
-.carrusel-container:active {
-  cursor: grabbing;
-}
-
-/* Ocultar barra de desplazamiento */
-.carrusel-container::-webkit-scrollbar {
-  display: none;
-}
-.carrusel-container {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Tarjeta individual */
-.tarjeta-comercio {
-  flex: 0 0 85%; /* En móviles ocupa 85% */
-  max-width: 320px; /* En laptops no se agrandará excesivamente */
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 12px;
-  border: 1px solid #eaeaea;
-  box-sizing: border-box;
-}
-
-.tarjeta-comercio img {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 8px;
-  pointer-events: none; /* Evita arrastrar la imagen en vez del carrusel */
-}
-
-.comercio-info h3 {
-  margin: 8px 0 4px 0;
-  color: #0d5c3a;
-  font-size: 1rem;
-}
-
-.comercio-info p {
-  font-size: 0.8rem;
-  color: #555;
-  margin-bottom: 8px;
-}
-
-.cupon-beneficio {
-  background-color: #e0f2e9;
-  border: 1px dashed #0d5c3a;
-  color: #0d5c3a;
-  padding: 5px 8px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  text-align: center;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.btn-whatsapp-comercio {
-  display: block;
-  text-align: center;
-  background-color: #25d366;
-  color: white;
-  text-decoration: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.85rem;
-}
-
-.carrusel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  background-color: #ccc;
-  border-radius: 50%;
-  transition: background-color 0.3s, width 0.3s;
-}
-
-.dot.activo {
-  background-color: #0d5c3a;
-  width: 18px;
-  border-radius: 4px;
+    .aliados-section {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
