@@ -566,7 +566,7 @@ function inicializarCarrusel() {
             <div class="comercio-info">
                 <h3>${comercio.nombre}</h3>
                 <p>${comercio.desc}</p>
-                <div class="cupon-beneficio">${comercio.cupon}</div>
+                
                 <a href="https://wa.me/${comercio.whatsapp}?text=Hola,%20vi%20su%20anuncio%20en%20Nauta360" 
                    target="_blank" 
                    class="btn-whatsapp-comercio">
