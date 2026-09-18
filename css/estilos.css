@@ -313,3 +313,71 @@ header h1 span {
     z-index: 2501;
     user-select: none;
 }
+/* Estilos para el módulo de publicidad */
+.ad-section {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ad-badge {
+  background-color: #e5a117; /* Dorado de la marca Nauta 360 */
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.ad-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.ad-info h3 {
+  margin: 10px 0 5px 0;
+  color: #0d5c3a; /* Verde selva */
+  font-size: 1.1rem;
+}
+
+.ad-info p {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.ad-coupon {
+  background-color: #e0f2e9;
+  border: 1px dashed #0d5c3a;
+  color: #0d5c3a;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.ad-btn {
+  display: block;
+  text-align: center;
+  background-color: #25d366; /* Verde WhatsApp */
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
