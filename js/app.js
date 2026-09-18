@@ -544,6 +544,7 @@ function habilitarArrastreLaptop(contenedor) {
     });
 }
 
+// 10. MÓDULO CARRUSEL DE PUBLICIDAD (CON DESPLAZAMIENTO AUTOMÁTICO)
 function inicializarCarrusel() {
     const contenedor = document.getElementById('carrusel-aliados');
     const contenedorDots = document.getElementById('carrusel-dots');
@@ -578,12 +579,13 @@ function inicializarCarrusel() {
 
     habilitarArrastreLaptop(contenedor);
 
+    // Actualizar indicador de puntos según la posición
     contenedor.addEventListener('scroll', () => {
         const scrollPosition = contenedor.scrollLeft;
         const primeraTarjeta = contenedor.querySelector('.tarjeta-comercio');
         if (!primeraTarjeta) return;
 
-        const cardWidth = primeraTarjeta.offsetWidth + 12;
+        const cardWidth = primeraTarjeta.offsetWidth + 12; // Ancho + gap
         const indexActivo = Math.round(scrollPosition / cardWidth);
 
         const dots = contenedorDots.querySelectorAll('.dot');
@@ -595,4 +597,40 @@ function inicializarCarrusel() {
             }
         });
     });
+
+    // --- LÓGICA DE DESPLAZAMIENTO AUTOMÁTICO ---
+    let intervaloAutoScroll = null;
+
+    function iniciarAutoScroll() {
+        if (intervaloAutoScroll) return; // Evitar múltiples intervalos
+        
+        intervaloAutoScroll = setInterval(() => {
+            const primeraTarjeta = contenedor.querySelector('.tarjeta-comercio');
+            if (!primeraTarjeta) return;
+
+            const cardWidth = primeraTarjeta.offsetWidth + 12; // Ancho + gap
+            const maxScroll = contenedor.scrollWidth - contenedor.clientWidth;
+
+            // Si llega al final del carrusel, vuelve al inicio
+            if (contenedor.scrollLeft >= maxScroll - 5) {
+                contenedor.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                contenedor.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            }
+        }, 3500); // Se desplaza cada 3.5 segundos
+    }
+
+    function detenerAutoScroll() {
+        clearInterval(intervaloAutoScroll);
+        intervaloAutoScroll = null;
+    }
+
+    // Iniciar movimiento automático
+    iniciarAutoScroll();
+
+    // Pausar al pasar el mouse o tocar para no molestar al usuario
+    contenedor.addEventListener('mouseenter', detenerAutoScroll);
+    contenedor.addEventListener('mouseleave', iniciarAutoScroll);
+    contenedor.addEventListener('touchstart', detenerAutoScroll, { passive: true });
+    contenedor.addEventListener('touchend', iniciarAutoScroll);
 }
