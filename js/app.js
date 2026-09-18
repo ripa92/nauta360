@@ -501,30 +501,85 @@ function hablarReseñaHistorica() {
 
     window.speechSynthesis.speak(lectura);
 }
-// Arreglo de auspiciadores de Nauta
-const anunciantes = [
+// Lista de comercios auspiciadores (Pautas B2B)
+const listaAliados = [
   {
+    id: 1,
     nombre: 'Recreo "La Tacacho"',
-    desc: 'Los mejores juanes y tacacho a la leña a 2 cuadras.',
-    cupon: '10% OFF en consumo',
-    imagen: 'img/tacacho.jpg',
+    desc: 'Los mejores juanes, tacacho a la leña y cecina de la ciudad.',
+    cupon: '🎁 10% OFF mostrando esta pantalla',
+    imagen: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500',
     whatsapp: '51999999999'
   },
   {
-    nombre: 'Hospedaje El Manguaré',
-    desc: 'Habitaciones con A/C y Wi-Fi en pleno centro.',
-    cupon: 'Check-out tardío gratis',
-    imagen: 'img/hospedaje.jpg',
+    id: 2,
+    nombre: 'Hospedaje "El Manguaré"',
+    desc: 'Habitaciones confortables con A/C, Wi-Fi y atención cálida.',
+    cupon: '🎁 Check-out tardío sin costo extra',
+    imagen: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
     whatsapp: '51988888888'
+  },
+  {
+    id: 3,
+    nombre: 'Mototaxi Tour Nauta',
+    desc: 'Recorridos guiados por los principales puntos turísticos.',
+    cupon: '🎁 S/ 5 de descuento en tour completo',
+    imagen: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500',
+    whatsapp: '51977777777'
   }
 ];
 
-// Seleccionar un anuncio al azar cada vez que abren el QR
-function cargarPublicidad() {
-  const adAleatorio = anunciantes[Math.floor(Math.random() * anunciantes.length)];
-  
-  // Aquí se actualiza el DOM con los datos del anunciante
-  console.log("Anuncio cargado:", adAleatorio.nombre);
+// Función para renderizar el carrusel
+function inicializarCarrusel() {
+  const contenedor = document.getElementById('carrusel-aliados');
+  const contenedorDots = document.getElementById('carrusel-dots');
+
+  if (!contenedor) return;
+
+  contenedor.innerHTML = '';
+  contenedorDots.innerHTML = '';
+
+  listaAliados.forEach((comercio, index) => {
+    // Generar tarjeta HTML
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'tarjeta-comercio';
+    tarjeta.innerHTML = `
+      <img src="${comercio.imagen}" alt="${comercio.nombre}">
+      <div class="comercio-info">
+        <h3>${comercio.nombre}</h3>
+        <p>${comercio.desc}</p>
+        <div class="cupon-beneficio">${comercio.cupon}</div>
+        <a href="https://wa.me/${comercio.whatsapp}?text=Hola,%20vi%20su%20anuncio%20en%20Nauta360" 
+           target="_blank" 
+           class="btn-whatsapp-comercio">
+           📱 Contactar / Reservar
+        </a>
+      </div>
+    `;
+    contenedor.appendChild(tarjeta);
+
+    // Generar indicador de punto (Dot)
+    const dot = document.createElement('div');
+    dot.className = `dot ${index === 0 ? 'activo' : ''}`;
+    contenedorDots.appendChild(dot);
+  });
+
+  // Detectar desplazamiento para actualizar los indicadores (Dots)
+  contenedor.addEventListener('scroll', () => {
+    const scrollPosition = contenedor.scrollLeft;
+    const cardWidth = contenedor.querySelector('.tarjeta-comercio').offsetWidth + 15;
+    const indexActivo = Math.round(scrollPosition / cardWidth);
+
+    const dots = contenedorDots.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      if (i === indexActivo) {
+        dot.classList.add('activo');
+      } else {
+        dot.classList.remove('activo');
+      }
+    });
+  });
 }
 
-document.addEventListener("DOMContentLoaded", cargarPublicidad);
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', inicializarCarrusel);
