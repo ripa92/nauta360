@@ -4,13 +4,28 @@
 
 // 1. CONFIGURACIÓN
 const SHEET_ID = '1NxsIhqz1W522b_TA51_H4ZP4Ds9KeYtKwI3FkJkTMdU'; 
-// REEMPLAZA LA SIGUIENTE LÍNEA CON TU NUEVA API KEY RECIÉN CREADA EN OPENAI:
-const OPENAI_API_KEY = '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'; 
-
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 // Lista oficial de IDs de monumentos
 const RUTA_MONUMENTOS = ['plaza', 'ucamara', 'parroquia', 'sapi', 'bolognesi', 'playa', 'mistica', 'zaragoza'];
+
+// Lista de aliados / comercios destacados para el carrusel
+const listaAliados = [
+    {
+        nombre: "Restaurante El Mirador",
+        desc: "Platos típicos de la selva y pescados frescos frente al río.",
+        cupon: "🎁 10% OFF en Tacacho con Cecina",
+        whatsapp: "51900000000",
+        imagen: "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"
+    },
+    {
+        nombre: "Hospedaje La Selva",
+        desc: "Habitaciones cómodas con A/C a 2 cuadras de la plaza.",
+        cupon: "🎁 Desayuno amazónico gratis",
+        whatsapp: "51900000000",
+        imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
+    }
+];
 
 // Datos completos del pasaporte para los 8 monumentos
 const DATOS_PASAPORTE = {
@@ -66,16 +81,15 @@ let textoOriginalEs = "";
 // EJECUCIÓN INMEDIATA
 document.addEventListener("DOMContentLoaded", () => {
     actualizarVisualizacionPasaporte();
+    inicializarCarrusel();
 
     const urlParams = new URLSearchParams(window.location.search);
     const monumentoId = urlParams.get('id'); 
 
     if (monumentoId) {
-        // Muestra todas las secciones si hay un ID detectado
         ocultarSeccionesSecundarias(false);
         cargarYMostrarMonumento(monumentoId);
     } else {
-        // Modo Inicio: Oculta secciones de abajo y muestra mensaje de bienvenida
         ocultarSeccionesSecundarias(true);
         mostrarMensajeBienvenida();
     }
@@ -120,8 +134,7 @@ function mostrarMensajeBienvenida() {
 
     if (tituloEl) tituloEl.innerText = "¡Bienvenido a Nauta360!";
     if (descEl) descEl.innerText = "Explora la riqueza histórica de Nauta. Escanea los códigos QR ubicados en los monumentos de la ciudad para activar tu guía interactivo, audio-relatos, mapas y tu pasaporte digital de turista.";
-    //if (imgEl) imgEl.src = "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTS"; 
-   if (imgEl) imgEl.src = "p_principal.png"; 
+    if (imgEl) imgEl.src = "p_principal.png"; 
 }
 
 function normalizarTexto(texto) {
@@ -225,7 +238,7 @@ async function cargarYMostrarMonumento(idBuscado) {
     }
 }
 
-// 4. CONEXIÓN CON IA (OpenAI)
+// 4. CONEXIÓN CON IA (Backend local / API)
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
     if (!inputPregunta) return;
@@ -501,85 +514,85 @@ function hablarReseñaHistorica() {
 
     window.speechSynthesis.speak(lectura);
 }
+
+// 10. MÓDULO CARRUSEL DE PUBLICIDAD Y ARRASTRE
 function habilitarArrastreLaptop(contenedor) {
-  let isDown = false;
-  let startX;
-  let scrollLeft;
+    let isDown = false;
+    let startX;
+    let scrollLeft;
 
-  contenedor.addEventListener('mousedown', (e) => {
-    isDown = true;
-    startX = e.pageX - contenedor.offsetLeft;
-    scrollLeft = contenedor.scrollLeft;
-  });
-
-  contenedor.addEventListener('mouseleave', () => {
-    isDown = false;
-  });
-
-  contenedor.addEventListener('mouseup', () => {
-    isDown = false;
-  });
-
-  contenedor.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - contenedor.offsetLeft;
-    const walk = (x - startX) * 2; // Velocidad del desplazamiento
-    contenedor.scrollLeft = scrollLeft - walk;
-  });
-}
-
-// Actualiza tu función de inicialización para incluir esta mejora
-function inicializarCarrusel() {
-  const contenedor = document.getElementById('carrusel-aliados');
-  const contenedorDots = document.getElementById('carrusel-dots');
-
-  if (!contenedor) return;
-
-  contenedor.innerHTML = '';
-  contenedorDots.innerHTML = '';
-
-  listaAliados.forEach((comercio, index) => {
-    const tarjeta = document.createElement('div');
-    tarjeta.className = 'tarjeta-comercio';
-    tarjeta.innerHTML = `
-      <img src="${comercio.imagen}" alt="${comercio.nombre}">
-      <div class="comercio-info">
-        <h3>${comercio.nombre}</h3>
-        <p>${comercio.desc}</p>
-        <div class="cupon-beneficio">${comercio.cupon}</div>
-        <a href="https://wa.me/${comercio.whatsapp}?text=Hola,%20vi%20su%20anuncio%20en%20Nauta360" 
-           target="_blank" 
-           class="btn-whatsapp-comercio">
-           📱 Contactar / Reservar
-        </a>
-      </div>
-    `;
-    contenedor.appendChild(tarjeta);
-
-    const dot = document.createElement('div');
-    dot.className = `dot ${index === 0 ? 'activo' : ''}`;
-    contenedorDots.appendChild(dot);
-  });
-
-  // Activar evento de arrastre con el cursor para laptop
-  habilitarArrastreLaptop(contenedor);
-
-  // Actualizar los puntos (Dots)
-  contenedor.addEventListener('scroll', () => {
-    const scrollPosition = contenedor.scrollLeft;
-    const cardWidth = contenedor.querySelector('.tarjeta-comercio').offsetWidth + 15;
-    const indexActivo = Math.round(scrollPosition / cardWidth);
-
-    const dots = contenedorDots.querySelectorAll('.dot');
-    dots.forEach((dot, i) => {
-      if (i === indexActivo) {
-        dot.classList.add('activo');
-      } else {
-        dot.classList.remove('activo');
-      }
+    contenedor.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - contenedor.offsetLeft;
+        scrollLeft = contenedor.scrollLeft;
     });
-  });
+
+    contenedor.addEventListener('mouseleave', () => {
+        isDown = false;
+    });
+
+    contenedor.addEventListener('mouseup', () => {
+        isDown = false;
+    });
+
+    contenedor.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - contenedor.offsetLeft;
+        const walk = (x - startX) * 2;
+        contenedor.scrollLeft = scrollLeft - walk;
+    });
 }
 
-document.addEventListener('DOMContentLoaded', inicializarCarrusel);
+function inicializarCarrusel() {
+    const contenedor = document.getElementById('carrusel-aliados');
+    const contenedorDots = document.getElementById('carrusel-dots');
+
+    if (!contenedor || !contenedorDots) return;
+
+    contenedor.innerHTML = '';
+    contenedorDots.innerHTML = '';
+
+    listaAliados.forEach((comercio, index) => {
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'tarjeta-comercio';
+        tarjeta.innerHTML = `
+            <img src="${comercio.imagen}" alt="${comercio.nombre}">
+            <div class="comercio-info">
+                <h3>${comercio.nombre}</h3>
+                <p>${comercio.desc}</p>
+                <div class="cupon-beneficio">${comercio.cupon}</div>
+                <a href="https://wa.me/${comercio.whatsapp}?text=Hola,%20vi%20su%20anuncio%20en%20Nauta360" 
+                   target="_blank" 
+                   class="btn-whatsapp-comercio">
+                   📱 Contactar / Reservar
+                </a>
+            </div>
+        `;
+        contenedor.appendChild(tarjeta);
+
+        const dot = document.createElement('div');
+        dot.className = `dot ${index === 0 ? 'activo' : ''}`;
+        contenedorDots.appendChild(dot);
+    });
+
+    habilitarArrastreLaptop(contenedor);
+
+    contenedor.addEventListener('scroll', () => {
+        const scrollPosition = contenedor.scrollLeft;
+        const primeraTarjeta = contenedor.querySelector('.tarjeta-comercio');
+        if (!primeraTarjeta) return;
+
+        const cardWidth = primeraTarjeta.offsetWidth + 12;
+        const indexActivo = Math.round(scrollPosition / cardWidth);
+
+        const dots = contenedorDots.querySelectorAll('.dot');
+        dots.forEach((dot, i) => {
+            if (i === indexActivo) {
+                dot.classList.add('activo');
+            } else {
+                dot.classList.remove('activo');
+            }
+        });
+    });
+}
