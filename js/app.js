@@ -25,6 +25,13 @@ const listaAliados = [
         whatsapp: "51900000000",
         imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
     }
+   {
+        nombre: "Hospedaje Nauta IN",
+        desc: "Habitaciones cómodas con A/C al frente de la plaza.",
+        cupon: "🎁 Desayuno amazónico gratis",
+        whatsapp: "51900000000",
+        imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
+    }
 ];
 
 // Datos completos del pasaporte para los 8 monumentos
