@@ -516,27 +516,27 @@ function hablarReseñaHistorica() {
 
     if (!descEl || !botonEfecto) return;
 
-    // 1. Si hay voz sintética sonando, la detenemos
-    if (window.speechSynthesis && window.speechSynthesis.speaking) {
+    // 1. SI HAY VOZ SINTÉTICA REPRODUCIÉNDOSE: La detenemos de inmediato y restablecemos
+    if (window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
         window.speechSynthesis.cancel();
+        restablecerBotonAudio(botonEfecto);
+        return;
     }
 
-    // 2. Si un audio real ya está sonando, lo pausamos y restablecemos el botón (TOGGLE)
+    // 2. SI HAY UN AUDIO REAL (GitHub) REPRODUCIÉNDOSE: Lo pausamos de inmediato
     if (reproductorAudioGlobal && !reproductorAudioGlobal.paused) {
         reproductorAudioGlobal.pause();
-        reproductorAudioGlobal.currentTime = 0; // Reiniciar al inicio
+        reproductorAudioGlobal.currentTime = 0; // Reiniciar
         restablecerBotonAudio(botonEfecto);
         return;
     }
 
     const audioUrl = window.audioMonumentoActual;
 
-    // 3. OPCIÓN A: REPRODUCIR AUDIO REAL EN SEGUNDO PLANO (GitHub Raw)
-    if (!enIngles && audioUrl) {
-        // Crear una nueva instancia de Audio
+    // 3. REPRODUCIR AUDIO REAL DESDE GITHUB (Solo en español si existe la URL)
+    if (!enIngles && audioUrl && audioUrl.trim() !== "") {
         reproductorAudioGlobal = new Audio(audioUrl);
 
-        // Cambiar apariencia del botón al iniciar reproducción
         reproductorAudioGlobal.play().then(() => {
             botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
             botonEfecto.style.backgroundColor = '#DC2626';
@@ -545,31 +545,22 @@ function hablarReseñaHistorica() {
             reproducirVozSintetica(descEl.innerText, botonEfecto);
         });
 
-        // Al finalizar el audio por completo, restablecer el botón
-        reproductorAudioGlobal.onended = () => {
-            restablecerBotonAudio(botonEfecto);
-        };
-
-        // Si ocurre un error de carga, restablecer el botón
-        reproductorAudioGlobal.onerror = () => {
-            restablecerBotonAudio(botonEfecto);
-        };
+        // Eventos para restablecer el botón al terminar o si hay error
+        reproductorAudioGlobal.onended = () => restablecerBotonAudio(botonEfecto);
+        reproductorAudioGlobal.onerror = () => restablecerBotonAudio(botonEfecto);
 
         return;
     }
 
-    // 4. OPCIÓN B: RESPALDO CON VOZ SINTÉTICA (Si no hay URL de audio o está en inglés)
+    // 4. REPRODUCIR VOZ SINTÉTICA (Si está en inglés o el monumento no tiene audio en español)
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
 function reproducirVozSintetica(texto, botonEfecto) {
     if (!window.speechSynthesis) return;
 
-    if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-        restablecerBotonAudio(botonEfecto);
-        return;
-    }
+    // Limpiar cualquier locución previa
+    window.speechSynthesis.cancel();
 
     const lectura = new SpeechSynthesisUtterance(texto);
     lectura.lang = enIngles ? 'en-US' : 'es-ES';
@@ -589,6 +580,7 @@ function reproducirVozSintetica(texto, botonEfecto) {
         restablecerBotonAudio(botonEfecto);
     };
 
+    // Iniciar la locución
     window.speechSynthesis.speak(lectura);
 }
 
