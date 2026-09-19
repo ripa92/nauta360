@@ -82,22 +82,26 @@ const MAPAS_RELEVANTES = {
 let enIngles = false;
 let textoOriginalEs = ""; 
 
-// Función para transformar URLs de Google Drive en audio directo reproducible
+// Función mejorada para extraer el ID exacto de Google Drive y construir la URL directa estandarizada
 function obtenerUrlDirectaDrive(url) {
     if (!url) return "";
-    
-    // Si contiene id=
-    const matchId = url.match(/id=([a-zA-Z0-9_-]+)/);
-    if (matchId && matchId[1]) {
-        return `https://docs.google.com/uc?export=download&id=${matchId[1]}`;
-    }
-    
-    // Si contiene /file/d/
+    let idEncontrado = "";
+
     const matchFile = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (matchFile && matchFile[1]) {
-        return `https://docs.google.com/uc?export=download&id=${matchFile[1]}`;
+        idEncontrado = matchFile[1];
+    } else {
+        const matchId = url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (matchId && matchId[1]) {
+            idEncontrado = matchId[1];
+        }
     }
-    
+
+    if (idEncontrado) {
+        // Formato para reproducir directamente en la etiqueta de audio/JS
+        return `https://drive.google.com/uc?export=download&id=${idEncontrado}`;
+    }
+
     return url;
 }
 
@@ -207,7 +211,7 @@ async function cargarYMostrarMonumento(idBuscado) {
                         nombre: (fila.c[1] && fila.c[1].v) ? fila.c[1].v : "Monumento sin nombre",
                         descripcion: (fila.c[2] && fila.c[2].v) ? fila.c[2].v : "Sin descripción disponible.",
                         url_imagen: fallbackImg,
-                        url_audio: obtenerUrlDirectaDrive(audioRaw), // Transformación automática a enlace directo de audio
+                        url_audio: obtenerUrlDirectaDrive(audioRaw), 
                         foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : fallbackImg,
                         foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : fallbackImg,
                         foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : fallbackImg,
@@ -237,7 +241,6 @@ async function cargarYMostrarMonumento(idBuscado) {
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
 
-            // Guarda la URL limpia de Drive para usarla en la reproducción
             window.audioMonumentoActual = monumentoEncontrado.url_audio;
 
             const elementoAudio = document.getElementById("monumento-audio");
@@ -266,7 +269,7 @@ async function cargarYMostrarMonumento(idBuscado) {
     }
 }
 
-// 4. CONEXIÓN CON IA (Backend local / API)
+// 4. CONEXIÓN CON IA
 async function manejarPreguntaIA() {
     const inputPregunta = document.getElementById("chat-pregunta");
     if (!inputPregunta) return;
@@ -503,7 +506,7 @@ function agregarMensajeAlChat(texto, claseEstilo) {
     return idUnico;
 }
 
-// 9. MÓDULO TEXT-TO-SPEECH
+// 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 let reproductorAudioHTML = null;
 
 function hablarReseñaHistorica() {
@@ -512,33 +515,46 @@ function hablarReseñaHistorica() {
 
     if (!descEl || !botonEfecto) return;
 
-    // --- CASO 1: ESPAÑOL Y EXISTE URL DE AUDIO EN GOOGLE SHEETS ---
+    // Cancela cualquier lectura en curso antes de procesar
+    if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+
+    // Toggle: Si el audio ya está sonando, pausarlo
+    if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
+        reproductorAudioHTML.pause();
+        reproductorAudioHTML.currentTime = 0;
+        restablecerBotonAudio(botonEfecto);
+        return;
+    }
+
+    // --- REPRODUCCIÓN AUDIO REAL DRIVE ---
     if (!enIngles && window.audioMonumentoActual && window.audioMonumentoActual.trim() !== "") {
+        botonEfecto.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando audio...';
         
-        // Si hay sintetizador activo, detenerlo
-        if (window.speechSynthesis.speaking) {
-            window.speechSynthesis.cancel();
-        }
-
-        // Si el audio HTML está reproduciéndose, pausarlo (Modo Toggle)
-        if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
+        if (reproductorAudioHTML) {
             reproductorAudioHTML.pause();
-            reproductorAudioHTML.currentTime = 0;
-            restablecerBotonAudio(botonEfecto);
-            return;
         }
 
-        // Crear instancia de audio con enlace preparado
-        reproductorAudioHTML = new Audio(window.audioMonumentoActual);
+        reproductorAudioHTML = new Audio();
+        reproductorAudioHTML.crossOrigin = "anonymous";
+        reproductorAudioHTML.src = window.audioMonumentoActual;
 
-        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
-        botonEfecto.style.backgroundColor = '#DC2626';
+        // Si carga con éxito, reproducir el audio grabado
+        reproductorAudioHTML.oncanplaythrough = () => {
+            botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
+            botonEfecto.style.backgroundColor = '#DC2626';
+            reproductorAudioHTML.play().catch(err => {
+                console.warn("Autoplay bloqueado por el navegador:", err);
+                reproducirVozSintetica(descEl.innerText, botonEfecto);
+            });
+        };
 
-        reproductorAudioHTML.play().catch(error => {
-            console.error("Error al reproducir el audio grabado:", error);
-            // Si falla la reproducción, usa voz sintética como alternativa
+        // Si falla la descarga del archivo de Drive (Página intermedia o error de CORS)
+        reproductorAudioHTML.onerror = (e) => {
+            console.error("No se pudo cargar el audio grabado desde Google Drive:", e);
             reproducirVozSintetica(descEl.innerText, botonEfecto);
-        });
+        };
 
         reproductorAudioHTML.onended = () => {
             restablecerBotonAudio(botonEfecto);
@@ -547,16 +563,13 @@ function hablarReseñaHistorica() {
         return;
     }
 
-    // --- CASO 2: INGLÉS O SIN AUDIO GRABADO (Sintetizador por defecto) ---
-    if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
-        reproductorAudioHTML.pause();
-        reproductorAudioHTML.currentTime = 0;
-    }
-
+    // Fallback directo a Voz Sintética en caso de estar en inglés o no tener URL
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
 function reproducirVozSintetica(texto, botonEfecto) {
+    if (!window.speechSynthesis) return;
+
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         restablecerBotonAudio(botonEfecto);
@@ -585,6 +598,7 @@ function reproducirVozSintetica(texto, botonEfecto) {
 }
 
 function restablecerBotonAudio(botonEfecto) {
+    if (!botonEfecto) return;
     botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
     botonEfecto.style.backgroundColor = 'var(--verde-selva, #0B6623)';
 }
