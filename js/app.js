@@ -514,46 +514,69 @@ function hablarReseñaHistorica() {
 
     if (!descEl || !botonEfecto) return;
 
+    // Detener voz sintética si está activa
     if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
 
     const audioUrl = window.audioMonumentoActual;
 
-    // Si hay una URL en Google Sheet que termine o contenga audio
+    // Si existe URL de audio desde Google Sheet (ej. GitHub Raw)
     if (!enIngles && audioUrl) {
         let contenedorAudio = document.getElementById("reproductor-drive-container");
 
+        // SI YA ESTÁ REPRODUCIENDO O MOSTRADO: Lo detenemos y ocultamos
         if (contenedorAudio && contenedorAudio.style.display !== "none") {
+            const audioElem = contenedorAudio.querySelector("audio");
+            if (audioElem) {
+                audioElem.pause();
+                audioElem.currentTime = 0; // Reiniciar reproducción
+            }
             contenedorAudio.style.display = "none";
             contenedorAudio.innerHTML = "";
             restablecerBotonAudio(botonEfecto);
             return;
         }
 
+        // SI NO EXISTE EL CONTENEDOR: Lo creamos
         if (!contenedorAudio) {
             contenedorAudio = document.createElement("div");
             contenedorAudio.id = "reproductor-drive-container";
-            contenedorAudio.style.marginTop = "12px";
             
-            const seccionAudio = document.querySelector(".audio-seccion") || botonEfecto.parentElement;
-            if (seccionAudio) seccionAudio.appendChild(contenedorAudio);
+            // Insertar inmediatamente DESPUÉS del botón para mantener la jerarquía sin mover la posición inicial
+            botonEfecto.parentNode.insertBefore(contenedorAudio, botonEfecto.nextSibling);
         }
 
-        // Reproductor HTML5 real y estándar
+        // Aplicar estilos para evitar que desplace abruptamente la maquetación
+        contenedorAudio.style.width = "100%";
+        contenedorAudio.style.marginTop = "10px";
+        contenedorAudio.style.display = "block";
+
+        // Insertar el reproductor HTML5 con autoplay
         contenedorAudio.innerHTML = `
-            <audio controls autoplay style="width: 100%; border-radius: 8px;">
+            <audio id="audio-player-element" controls autoplay style="width: 100%; border-radius: 8px; display: block;">
                 <source src="${audioUrl}">
                 Tu navegador no soporta el reproductor de audio.
             </audio>
         `;
-        contenedorAudio.style.display = "block";
 
-        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Ocultar reproductor';
+        // Evento: cuando el audio finalice por sí solo, restablecer el botón
+        const audioCreado = document.getElementById("audio-player-element");
+        if (audioCreado) {
+            audioCreado.onended = () => {
+                contenedorAudio.style.display = "none";
+                contenedorAudio.innerHTML = "";
+                restablecerBotonAudio(botonEfecto);
+            };
+        }
+
+        // Actualizar apariencia del botón
+        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
         botonEfecto.style.backgroundColor = '#DC2626';
         return;
     }
 
+    // Si no hay URL de audio, usar voz sintética por defecto
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
