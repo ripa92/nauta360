@@ -508,75 +508,57 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
+let reproductorAudioGlobal = null; // Instancia de audio en segundo plano
+
 function hablarReseñaHistorica() {
     const descEl = document.getElementById("monumento-descripcion");
     const botonEfecto = document.getElementById("btn-leer-texto");
 
     if (!descEl || !botonEfecto) return;
 
-    // Detener voz sintética si está activa
+    // 1. Si hay voz sintética sonando, la detenemos
     if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
 
-    const audioUrl = window.audioMonumentoActual;
-
-    // Si existe URL de audio desde Google Sheet (ej. GitHub Raw)
-    if (!enIngles && audioUrl) {
-        let contenedorAudio = document.getElementById("reproductor-drive-container");
-
-        // SI YA ESTÁ REPRODUCIENDO O MOSTRADO: Lo detenemos y ocultamos
-        if (contenedorAudio && contenedorAudio.style.display !== "none") {
-            const audioElem = contenedorAudio.querySelector("audio");
-            if (audioElem) {
-                audioElem.pause();
-                audioElem.currentTime = 0; // Reiniciar reproducción
-            }
-            contenedorAudio.style.display = "none";
-            contenedorAudio.innerHTML = "";
-            restablecerBotonAudio(botonEfecto);
-            return;
-        }
-
-        // SI NO EXISTE EL CONTENEDOR: Lo creamos
-        if (!contenedorAudio) {
-            contenedorAudio = document.createElement("div");
-            contenedorAudio.id = "reproductor-drive-container";
-            
-            // Insertar inmediatamente DESPUÉS del botón para mantener la jerarquía sin mover la posición inicial
-            botonEfecto.parentNode.insertBefore(contenedorAudio, botonEfecto.nextSibling);
-        }
-
-        // Aplicar estilos para evitar que desplace abruptamente la maquetación
-        contenedorAudio.style.width = "100%";
-        contenedorAudio.style.marginTop = "10px";
-        contenedorAudio.style.display = "block";
-
-        // Insertar el reproductor HTML5 con autoplay
-        contenedorAudio.innerHTML = `
-            <audio id="audio-player-element" controls autoplay style="width: 100%; border-radius: 8px; display: block;">
-                <source src="${audioUrl}">
-                Tu navegador no soporta el reproductor de audio.
-            </audio>
-        `;
-
-        // Evento: cuando el audio finalice por sí solo, restablecer el botón
-        const audioCreado = document.getElementById("audio-player-element");
-        if (audioCreado) {
-            audioCreado.onended = () => {
-                contenedorAudio.style.display = "none";
-                contenedorAudio.innerHTML = "";
-                restablecerBotonAudio(botonEfecto);
-            };
-        }
-
-        // Actualizar apariencia del botón
-        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
-        botonEfecto.style.backgroundColor = '#DC2626';
+    // 2. Si un audio real ya está sonando, lo pausamos y restablecemos el botón (TOGGLE)
+    if (reproductorAudioGlobal && !reproductorAudioGlobal.paused) {
+        reproductorAudioGlobal.pause();
+        reproductorAudioGlobal.currentTime = 0; // Reiniciar al inicio
+        restablecerBotonAudio(botonEfecto);
         return;
     }
 
-    // Si no hay URL de audio, usar voz sintética por defecto
+    const audioUrl = window.audioMonumentoActual;
+
+    // 3. OPCIÓN A: REPRODUCIR AUDIO REAL EN SEGUNDO PLANO (GitHub Raw)
+    if (!enIngles && audioUrl) {
+        // Crear una nueva instancia de Audio
+        reproductorAudioGlobal = new Audio(audioUrl);
+
+        // Cambiar apariencia del botón al iniciar reproducción
+        reproductorAudioGlobal.play().then(() => {
+            botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
+            botonEfecto.style.backgroundColor = '#DC2626';
+        }).catch(err => {
+            console.warn("No se pudo reproducir el audio del enlace, usando voz sintética de respaldo:", err);
+            reproducirVozSintetica(descEl.innerText, botonEfecto);
+        });
+
+        // Al finalizar el audio por completo, restablecer el botón
+        reproductorAudioGlobal.onended = () => {
+            restablecerBotonAudio(botonEfecto);
+        };
+
+        // Si ocurre un error de carga, restablecer el botón
+        reproductorAudioGlobal.onerror = () => {
+            restablecerBotonAudio(botonEfecto);
+        };
+
+        return;
+    }
+
+    // 4. OPCIÓN B: RESPALDO CON VOZ SINTÉTICA (Si no hay URL de audio o está en inglés)
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
