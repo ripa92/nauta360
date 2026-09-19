@@ -508,7 +508,6 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
-// 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 let reproductorAudioHTML = null;
 
 function hablarReseñaHistorica() {
@@ -517,59 +516,53 @@ function hablarReseñaHistorica() {
 
     if (!descEl || !botonEfecto) return;
 
-    // Cancela la voz sintética en caso de que estuviera sonando
     if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
 
-    // Extraer ID y generar URL de reproducción directa
-    function obtenerDriveDirectStreamUrl(url) {
+    function obtenerDriveEmbedUrl(url) {
         if (!url) return null;
         const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-        // Formato para streaming directo sin redirección a la web de Drive
-        return match ? `https://lh3.googleusercontent.com/d/${match[1]}` : null;
+        return match ? `https://drive.google.com/file/d/${match[1]}/preview` : null;
     }
 
-    const audioDirectoUrl = obtenerDriveDirectStreamUrl(window.audioMonumentoActual);
+    const drivePreviewUrl = obtenerDriveEmbedUrl(window.audioMonumentoActual);
 
-    // --- OPCIÓN A: AUDIO REAL DE GOOGLE DRIVE (REPRODUCTOR HTML5 NATIVO) ---
-    if (!enIngles && audioDirectoUrl) {
-        let contenedorAudio = document.getElementById("reproductor-drive-container");
+    if (!enIngles && drivePreviewUrl) {
+        let contenedorDrive = document.getElementById("reproductor-drive-container");
 
-        // Toggle: Si el reproductor ya está abierto y visible, lo apaga y cierra
-        if (contenedorAudio && contenedorAudio.style.display !== "none") {
-            contenedorAudio.style.display = "none";
-            contenedorAudio.innerHTML = ""; // Detiene el audio por completo
+        if (contenedorDrive && contenedorDrive.style.display !== "none") {
+            contenedorDrive.style.display = "none";
+            contenedorDrive.innerHTML = "";
             restablecerBotonAudio(botonEfecto);
             return;
         }
 
-        // Si no existe el contenedor en la interfaz, se crea dinámicamente
-        if (!contenedorAudio) {
-            contenedorAudio = document.createElement("div");
-            contenedorAudio.id = "reproductor-drive-container";
-            contenedorAudio.style.marginTop = "12px";
+        if (!contenedorDrive) {
+            contenedorDrive = document.createElement("div");
+            contenedorDrive.id = "reproductor-drive-container";
+            contenedorDrive.style.marginTop = "12px";
             
             const seccionAudio = document.querySelector(".audio-seccion") || botonEfecto.parentElement;
-            if (seccionAudio) seccionAudio.appendChild(contenedorAudio);
+            if (seccionAudio) seccionAudio.appendChild(contenedorDrive);
         }
 
-        // Renderiza un reproductor HTML5 limpio en lugar de un iframe
-        contenedorAudio.innerHTML = `
-            <audio controls autoplay style="width: 100%; border-radius: 8px; outline: none;">
-                <source src="${audioDirectoUrl}" type="audio/mp4">
-                <source src="${audioDirectoUrl}" type="audio/mpeg">
-                Tu navegador no soporta el reproductor de audio.
-            </audio>
+        // Se usa un iframe compacto con desbordamiento oculto para ocultar el icono negro superior
+        contenedorDrive.innerHTML = `
+            <div style="position: relative; width: 100%; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <iframe src="${drivePreviewUrl}" 
+                        style="width: 100%; height: 160px; position: absolute; top: -55px; left: 0; border: none;" 
+                        allow="autoplay">
+                </iframe>
+            </div>
         `;
-        contenedorAudio.style.display = "block";
+        contenedorDrive.style.display = "block";
 
         botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Ocultar reproductor';
         botonEfecto.style.backgroundColor = '#DC2626';
         return;
     }
 
-    // --- OPCIÓN B: RESPALDO VOZ SINTÉTICA ---
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
