@@ -186,7 +186,7 @@ async function cargarYMostrarMonumento(idBuscado) {
                         nombre: (fila.c[1] && fila.c[1].v) ? fila.c[1].v : "Monumento sin nombre",
                         descripcion: (fila.c[2] && fila.c[2].v) ? fila.c[2].v : "Sin descripción disponible.",
                         url_imagen: fallbackImg,
-                        url_audio: (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "",
+                        url_audio: (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "", // <-- AQUÍ YA JALA LA URL DE GOOGLE SHEETS
                         foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : fallbackImg,
                         foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : fallbackImg,
                         foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : fallbackImg,
@@ -215,6 +215,9 @@ async function cargarYMostrarMonumento(idBuscado) {
 
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
+
+            // --- LÍNEA AGREGADA: Guarda la URL del audio para usarla en el botón reproducir ---
+            window.audioMonumentoActual = monumentoEncontrado.url_audio;
 
             const elementoAudio = document.getElementById("monumento-audio");
             const seccionAudio = document.querySelector(".audio-seccion");
@@ -480,45 +483,97 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 }
 
 // 9. MÓDULO TEXT-TO-SPEECH
+// Variable global para controlar la reproducción del audio HTML5
+let reproductorAudioHTML = null;
+
 function hablarReseñaHistorica() {
     const descEl = document.getElementById("monumento-descripcion");
-    if (!descEl) return;
-
-    const textoParaLeer = descEl.innerText;
     const botonEfecto = document.getElementById("btn-leer-texto");
 
-    if (!botonEfecto) return;
+    if (!descEl || !botonEfecto) return;
 
-    if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-        botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
-        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
+    // --- CASO 1: ESPAÑOL Y EXISTE URL DE AUDIO EN GOOGLE SHEETS ---
+    if (!enIngles && window.audioMonumentoActual && window.audioMonumentoActual.trim() !== "") {
+        
+        // Si ya está sonando el audio por voz sintética, lo detenemos
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+
+        // Si el audio HTML ya está reproduciéndose, lo pausamos (modo Toggle)
+        if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
+            reproductorAudioHTML.pause();
+            reproductorAudioHTML.currentTime = 0; // Reiniciar al inicio
+            restablecerBotonAudio(botonEfecto);
+            return;
+        }
+
+        // Crear y reproducir el audio desde la URL de Google Sheets
+        reproductorAudioHTML = new Audio(window.audioMonumentoActual);
+
+        // Cambiar estado visual del botón al iniciar
+        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
+        botonEfecto.style.backgroundColor = '#DC2626';
+
+        reproductorAudioHTML.play().catch(error => {
+            console.error("Error al reproducir el audio grabado:", error);
+            // Si falla la URL, usamos la voz sintética de respaldo
+            reproducirVozSintetica(descEl.innerText, botonEfecto);
+        });
+
+        // Al finalizar el audio, restaurar el botón
+        reproductorAudioHTML.onended = () => {
+            restablecerBotonAudio(botonEfecto);
+        };
+
         return;
     }
 
-    const lectura = new SpeechSynthesisUtterance(textoParaLeer);
-    lectura.lang = enIngles ? 'en-US' : 'es-ES'; 
-    lectura.rate = 1.0; 
-    lectura.pitch = 1.0; 
+    // --- CASO 2: INGLÉS O SIN AUDIO GRABADO (Usa voz sintética por defecto) ---
+    
+    // Si había un audio HTML sonando, lo detenemos
+    if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
+        reproductorAudioHTML.pause();
+        reproductorAudioHTML.currentTime = 0;
+    }
+
+    reproducirVozSintetica(descEl.innerText, botonEfecto);
+}
+
+// Función auxiliar para voz sintética (SpeechSynthesis)
+function reproducirVozSintetica(texto, botonEfecto) {
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        restablecerBotonAudio(botonEfecto);
+        return;
+    }
+
+    const lectura = new SpeechSynthesisUtterance(texto);
+    lectura.lang = enIngles ? 'en-US' : 'es-ES';
+    lectura.rate = 1.0;
+    lectura.pitch = 1.0;
 
     lectura.onstart = () => {
         botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener';
-        botonEfecto.style.backgroundColor = '#DC2626'; 
+        botonEfecto.style.backgroundColor = '#DC2626';
     };
 
     lectura.onend = () => {
-        botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
-        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
+        restablecerBotonAudio(botonEfecto);
     };
 
     lectura.onerror = () => {
-        botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
-        botonEfecto.style.backgroundColor = 'var(--verde-selva, #10B981)';
+        restablecerBotonAudio(botonEfecto);
     };
 
     window.speechSynthesis.speak(lectura);
 }
 
+// Función auxiliar para restaurar el diseño original del botón
+function restablecerBotonAudio(botonEfecto) {
+    botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
+    botonEfecto.style.backgroundColor = 'var(--verde-selva, #0B6623)';
+}
 // 10. MÓDULO CARRUSEL DE PUBLICIDAD Y ARRASTRE
 function habilitarArrastreLaptop(contenedor) {
     let isDown = false;
