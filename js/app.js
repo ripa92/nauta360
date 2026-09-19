@@ -507,6 +507,7 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 }
 
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
+// 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 let reproductorAudioHTML = null;
 
 function hablarReseñaHistorica() {
@@ -515,55 +516,53 @@ function hablarReseñaHistorica() {
 
     if (!descEl || !botonEfecto) return;
 
-    // Cancela cualquier lectura en curso antes de procesar
+    // Cancela la voz sintética en caso de que estuviera sonando
     if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
     }
 
-    // Toggle: Si el audio ya está sonando, pausarlo
-    if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
-        reproductorAudioHTML.pause();
-        reproductorAudioHTML.currentTime = 0;
-        restablecerBotonAudio(botonEfecto);
-        return;
+    // Extraer el ID único del archivo desde el enlace de Google Drive
+    function obtenerDriveEmbedUrl(url) {
+        if (!url) return null;
+        const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        return match ? `https://drive.google.com/file/d/${match[1]}/preview` : null;
     }
 
-    // --- REPRODUCCIÓN AUDIO REAL DRIVE ---
-    if (!enIngles && window.audioMonumentoActual && window.audioMonumentoActual.trim() !== "") {
-        botonEfecto.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando audio...';
-        
-        if (reproductorAudioHTML) {
-            reproductorAudioHTML.pause();
+    const drivePreviewUrl = obtenerDriveEmbedUrl(window.audioMonumentoActual);
+
+    // --- OPCIÓN A: AUDIO REAL DE GOOGLE DRIVE ---
+    if (!enIngles && drivePreviewUrl) {
+        let contenedorIframe = document.getElementById("reproductor-drive-container");
+
+        // Toggle: Si el reproductor ya está abierto y visible, lo apaga y cierra
+        if (contenedorIframe && contenedorIframe.style.display !== "none") {
+            contenedorIframe.style.display = "none";
+            contenedorIframe.innerHTML = ""; // Al vaciar el HTML, el audio se detiene por completo
+            restablecerBotonAudio(botonEfecto);
+            return;
         }
 
-        reproductorAudioHTML = new Audio();
-        reproductorAudioHTML.crossOrigin = "anonymous";
-        reproductorAudioHTML.src = window.audioMonumentoActual;
+        // Si no existe el contenedor en la interfaz, se crea dinámicamente
+        if (!contenedorIframe) {
+            contenedorIframe = document.createElement("div");
+            contenedorIframe.id = "reproductor-drive-container";
+            contenedorIframe.style.marginTop = "12px";
+            
+            const seccionAudio = document.querySelector(".audio-seccion") || botonEfecto.parentElement;
+            if (seccionAudio) seccionAudio.appendChild(contenedorIframe);
+        }
 
-        // Si carga con éxito, reproducir el audio grabado
-        reproductorAudioHTML.oncanplaythrough = () => {
-            botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
-            botonEfecto.style.backgroundColor = '#DC2626';
-            reproductorAudioHTML.play().catch(err => {
-                console.warn("Autoplay bloqueado por el navegador:", err);
-                reproducirVozSintetica(descEl.innerText, botonEfecto);
-            });
-        };
+        // Carga el iframe nativo del archivo de audio específico de este monumento
+        contenedorIframe.innerHTML = `<iframe src="${drivePreviewUrl}" width="100%" height="60" frameborder="0" allow="autoplay" style="border-radius: 8px;"></iframe>`;
+        contenedorIframe.style.display = "block";
 
-        // Si falla la descarga del archivo de Drive (Página intermedia o error de CORS)
-        reproductorAudioHTML.onerror = (e) => {
-            console.error("No se pudo cargar el audio grabado desde Google Drive:", e);
-            reproducirVozSintetica(descEl.innerText, botonEfecto);
-        };
-
-        reproductorAudioHTML.onended = () => {
-            restablecerBotonAudio(botonEfecto);
-        };
-
+        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Ocultar reproductor';
+        botonEfecto.style.backgroundColor = '#DC2626';
         return;
     }
 
-    // Fallback directo a Voz Sintética en caso de estar en inglés o no tener URL
+    // --- OPCIÓN B: RESPALDO VOZ SINTÉTICA ---
+    // Se activa solo si está traducido a inglés o si la celda de audio en Google Sheets está vacía
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
@@ -582,7 +581,7 @@ function reproducirVozSintetica(texto, botonEfecto) {
     lectura.pitch = 1.0;
 
     lectura.onstart = () => {
-        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener';
+        botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener voz';
         botonEfecto.style.backgroundColor = '#DC2626';
     };
 
@@ -602,7 +601,6 @@ function restablecerBotonAudio(botonEfecto) {
     botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
     botonEfecto.style.backgroundColor = 'var(--verde-selva, #0B6623)';
 }
-
 // 10. MÓDULO CARRUSEL DE PUBLICIDAD Y ARRASTRE
 function habilitarArrastreLaptop(contenedor) {
     let isDown = false;
