@@ -508,6 +508,7 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
+// 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 let reproductorAudioHTML = null;
 
 function hablarReseñaHistorica() {
@@ -521,40 +522,47 @@ function hablarReseñaHistorica() {
         window.speechSynthesis.cancel();
     }
 
-    // Extraer el ID único del archivo desde el enlace de Google Drive
-    function obtenerDriveEmbedUrl(url) {
+    // Extraer ID y generar URL de reproducción directa
+    function obtenerDriveDirectStreamUrl(url) {
         if (!url) return null;
         const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-        return match ? `https://drive.google.com/file/d/${match[1]}/preview` : null;
+        // Formato para streaming directo sin redirección a la web de Drive
+        return match ? `https://lh3.googleusercontent.com/d/${match[1]}` : null;
     }
 
-    const drivePreviewUrl = obtenerDriveEmbedUrl(window.audioMonumentoActual);
+    const audioDirectoUrl = obtenerDriveDirectStreamUrl(window.audioMonumentoActual);
 
-    // --- OPCIÓN A: AUDIO REAL DE GOOGLE DRIVE ---
-    if (!enIngles && drivePreviewUrl) {
-        let contenedorIframe = document.getElementById("reproductor-drive-container");
+    // --- OPCIÓN A: AUDIO REAL DE GOOGLE DRIVE (REPRODUCTOR HTML5 NATIVO) ---
+    if (!enIngles && audioDirectoUrl) {
+        let contenedorAudio = document.getElementById("reproductor-drive-container");
 
         // Toggle: Si el reproductor ya está abierto y visible, lo apaga y cierra
-        if (contenedorIframe && contenedorIframe.style.display !== "none") {
-            contenedorIframe.style.display = "none";
-            contenedorIframe.innerHTML = ""; // Al vaciar el HTML, el audio se detiene por completo
+        if (contenedorAudio && contenedorAudio.style.display !== "none") {
+            contenedorAudio.style.display = "none";
+            contenedorAudio.innerHTML = ""; // Detiene el audio por completo
             restablecerBotonAudio(botonEfecto);
             return;
         }
 
         // Si no existe el contenedor en la interfaz, se crea dinámicamente
-        if (!contenedorIframe) {
-            contenedorIframe = document.createElement("div");
-            contenedorIframe.id = "reproductor-drive-container";
-            contenedorIframe.style.marginTop = "12px";
+        if (!contenedorAudio) {
+            contenedorAudio = document.createElement("div");
+            contenedorAudio.id = "reproductor-drive-container";
+            contenedorAudio.style.marginTop = "12px";
             
             const seccionAudio = document.querySelector(".audio-seccion") || botonEfecto.parentElement;
-            if (seccionAudio) seccionAudio.appendChild(contenedorIframe);
+            if (seccionAudio) seccionAudio.appendChild(contenedorAudio);
         }
 
-        // Carga el iframe nativo del archivo de audio específico de este monumento
-        contenedorIframe.innerHTML = `<iframe src="${drivePreviewUrl}" width="100%" height="60" frameborder="0" allow="autoplay" style="border-radius: 8px;"></iframe>`;
-        contenedorIframe.style.display = "block";
+        // Renderiza un reproductor HTML5 limpio en lugar de un iframe
+        contenedorAudio.innerHTML = `
+            <audio controls autoplay style="width: 100%; border-radius: 8px; outline: none;">
+                <source src="${audioDirectoUrl}" type="audio/mp4">
+                <source src="${audioDirectoUrl}" type="audio/mpeg">
+                Tu navegador no soporta el reproductor de audio.
+            </audio>
+        `;
+        contenedorAudio.style.display = "block";
 
         botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Ocultar reproductor';
         botonEfecto.style.backgroundColor = '#DC2626';
@@ -562,7 +570,6 @@ function hablarReseñaHistorica() {
     }
 
     // --- OPCIÓN B: RESPALDO VOZ SINTÉTICA ---
-    // Se activa solo si está traducido a inglés o si la celda de audio en Google Sheets está vacía
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
