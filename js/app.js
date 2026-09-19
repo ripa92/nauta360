@@ -508,8 +508,6 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
 // 9. MÓDULO REPRODUCTOR Y SINTETIZADOR AUDIO
-let reproductorAudioHTML = null;
-
 function hablarReseñaHistorica() {
     const descEl = document.getElementById("monumento-descripcion");
     const botonEfecto = document.getElementById("btn-leer-texto");
@@ -520,43 +518,36 @@ function hablarReseñaHistorica() {
         window.speechSynthesis.cancel();
     }
 
-    function obtenerDriveEmbedUrl(url) {
-        if (!url) return null;
-        const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-        return match ? `https://drive.google.com/file/d/${match[1]}/preview` : null;
-    }
+    const audioUrl = window.audioMonumentoActual;
 
-    const drivePreviewUrl = obtenerDriveEmbedUrl(window.audioMonumentoActual);
+    // Si hay una URL en Google Sheet que termine o contenga audio
+    if (!enIngles && audioUrl) {
+        let contenedorAudio = document.getElementById("reproductor-drive-container");
 
-    if (!enIngles && drivePreviewUrl) {
-        let contenedorDrive = document.getElementById("reproductor-drive-container");
-
-        if (contenedorDrive && contenedorDrive.style.display !== "none") {
-            contenedorDrive.style.display = "none";
-            contenedorDrive.innerHTML = "";
+        if (contenedorAudio && contenedorAudio.style.display !== "none") {
+            contenedorAudio.style.display = "none";
+            contenedorAudio.innerHTML = "";
             restablecerBotonAudio(botonEfecto);
             return;
         }
 
-        if (!contenedorDrive) {
-            contenedorDrive = document.createElement("div");
-            contenedorDrive.id = "reproductor-drive-container";
-            contenedorDrive.style.marginTop = "12px";
+        if (!contenedorAudio) {
+            contenedorAudio = document.createElement("div");
+            contenedorAudio.id = "reproductor-drive-container";
+            contenedorAudio.style.marginTop = "12px";
             
             const seccionAudio = document.querySelector(".audio-seccion") || botonEfecto.parentElement;
-            if (seccionAudio) seccionAudio.appendChild(contenedorDrive);
+            if (seccionAudio) seccionAudio.appendChild(contenedorAudio);
         }
 
-        // Se usa un iframe compacto con desbordamiento oculto para ocultar el icono negro superior
-        contenedorDrive.innerHTML = `
-            <div style="position: relative; width: 100%; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid #e5e7eb;">
-                <iframe src="${drivePreviewUrl}" 
-                        style="width: 100%; height: 160px; position: absolute; top: -55px; left: 0; border: none;" 
-                        allow="autoplay">
-                </iframe>
-            </div>
+        // Reproductor HTML5 real y estándar
+        contenedorAudio.innerHTML = `
+            <audio controls autoplay style="width: 100%; border-radius: 8px;">
+                <source src="${audioUrl}">
+                Tu navegador no soporta el reproductor de audio.
+            </audio>
         `;
-        contenedorDrive.style.display = "block";
+        contenedorAudio.style.display = "block";
 
         botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Ocultar reproductor';
         botonEfecto.style.backgroundColor = '#DC2626';
