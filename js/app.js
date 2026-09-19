@@ -20,10 +20,10 @@ const listaAliados = [
     {
         nombre: "Transportes Jaen",
         desc: "Modernos autos en la ruta Nauta - Iquitos.",
-         whatsapp: "51900000000",
+        whatsapp: "51900000000",
         imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
     },
-   {
+    {
         nombre: "Hospedaje Nauta IN",
         desc: "Habitaciones cómodas con A/C al frente de la plaza.",
         whatsapp: "51900000000",
@@ -81,6 +81,25 @@ const MAPAS_RELEVANTES = {
 
 let enIngles = false;
 let textoOriginalEs = ""; 
+
+// Función para transformar URLs de Google Drive en audio directo reproducible
+function obtenerUrlDirectaDrive(url) {
+    if (!url) return "";
+    
+    // Si contiene id=
+    const matchId = url.match(/id=([a-zA-Z0-9_-]+)/);
+    if (matchId && matchId[1]) {
+        return `https://docs.google.com/uc?export=download&id=${matchId[1]}`;
+    }
+    
+    // Si contiene /file/d/
+    const matchFile = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (matchFile && matchFile[1]) {
+        return `https://docs.google.com/uc?export=download&id=${matchFile[1]}`;
+    }
+    
+    return url;
+}
 
 // EJECUCIÓN INMEDIATA
 document.addEventListener("DOMContentLoaded", () => {
@@ -181,12 +200,14 @@ async function cargarYMostrarMonumento(idBuscado) {
                 const idCeldaLimpio = normalizarTexto(fila.c[0].v);
                 if (idCeldaLimpio === idBuscadoLimpio) {
                     const fallbackImg = fila.c[3] ? fila.c[3].v : "assets/imagenes/placeholder.jpg";
+                    const audioRaw = (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "";
+
                     monumentoEncontrado = {
                         id: idCeldaLimpio, 
                         nombre: (fila.c[1] && fila.c[1].v) ? fila.c[1].v : "Monumento sin nombre",
                         descripcion: (fila.c[2] && fila.c[2].v) ? fila.c[2].v : "Sin descripción disponible.",
                         url_imagen: fallbackImg,
-                        url_audio: (fila.c[4] && fila.c[4].v) ? fila.c[4].v : "", // <-- AQUÍ YA JALA LA URL DE GOOGLE SHEETS
+                        url_audio: obtenerUrlDirectaDrive(audioRaw), // Transformación automática a enlace directo de audio
                         foto1: (fila.c[5] && fila.c[5].v) ? fila.c[5].v : fallbackImg,
                         foto2: (fila.c[6] && fila.c[6].v) ? fila.c[6].v : fallbackImg,
                         foto3: (fila.c[7] && fila.c[7].v) ? fila.c[7].v : fallbackImg,
@@ -216,7 +237,7 @@ async function cargarYMostrarMonumento(idBuscado) {
             window.historiaMonumentoActual = monumentoEncontrado.descripcion;
             textoOriginalEs = monumentoEncontrado.descripcion;
 
-            // --- LÍNEA AGREGADA: Guarda la URL del audio para usarla en el botón reproducir ---
+            // Guarda la URL limpia de Drive para usarla en la reproducción
             window.audioMonumentoActual = monumentoEncontrado.url_audio;
 
             const elementoAudio = document.getElementById("monumento-audio");
@@ -483,7 +504,6 @@ function agregarMensajeAlChat(texto, claseEstilo) {
 }
 
 // 9. MÓDULO TEXT-TO-SPEECH
-// Variable global para controlar la reproducción del audio HTML5
 let reproductorAudioHTML = null;
 
 function hablarReseñaHistorica() {
@@ -495,33 +515,31 @@ function hablarReseñaHistorica() {
     // --- CASO 1: ESPAÑOL Y EXISTE URL DE AUDIO EN GOOGLE SHEETS ---
     if (!enIngles && window.audioMonumentoActual && window.audioMonumentoActual.trim() !== "") {
         
-        // Si ya está sonando el audio por voz sintética, lo detenemos
+        // Si hay sintetizador activo, detenerlo
         if (window.speechSynthesis.speaking) {
             window.speechSynthesis.cancel();
         }
 
-        // Si el audio HTML ya está reproduciéndose, lo pausamos (modo Toggle)
+        // Si el audio HTML está reproduciéndose, pausarlo (Modo Toggle)
         if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
             reproductorAudioHTML.pause();
-            reproductorAudioHTML.currentTime = 0; // Reiniciar al inicio
+            reproductorAudioHTML.currentTime = 0;
             restablecerBotonAudio(botonEfecto);
             return;
         }
 
-        // Crear y reproducir el audio desde la URL de Google Sheets
+        // Crear instancia de audio con enlace preparado
         reproductorAudioHTML = new Audio(window.audioMonumentoActual);
 
-        // Cambiar estado visual del botón al iniciar
         botonEfecto.innerHTML = '<i class="fas fa-stop"></i> Detener audio';
         botonEfecto.style.backgroundColor = '#DC2626';
 
         reproductorAudioHTML.play().catch(error => {
             console.error("Error al reproducir el audio grabado:", error);
-            // Si falla la URL, usamos la voz sintética de respaldo
+            // Si falla la reproducción, usa voz sintética como alternativa
             reproducirVozSintetica(descEl.innerText, botonEfecto);
         });
 
-        // Al finalizar el audio, restaurar el botón
         reproductorAudioHTML.onended = () => {
             restablecerBotonAudio(botonEfecto);
         };
@@ -529,9 +547,7 @@ function hablarReseñaHistorica() {
         return;
     }
 
-    // --- CASO 2: INGLÉS O SIN AUDIO GRABADO (Usa voz sintética por defecto) ---
-    
-    // Si había un audio HTML sonando, lo detenemos
+    // --- CASO 2: INGLÉS O SIN AUDIO GRABADO (Sintetizador por defecto) ---
     if (reproductorAudioHTML && !reproductorAudioHTML.paused) {
         reproductorAudioHTML.pause();
         reproductorAudioHTML.currentTime = 0;
@@ -540,7 +556,6 @@ function hablarReseñaHistorica() {
     reproducirVozSintetica(descEl.innerText, botonEfecto);
 }
 
-// Función auxiliar para voz sintética (SpeechSynthesis)
 function reproducirVozSintetica(texto, botonEfecto) {
     if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
@@ -569,11 +584,11 @@ function reproducirVozSintetica(texto, botonEfecto) {
     window.speechSynthesis.speak(lectura);
 }
 
-// Función auxiliar para restaurar el diseño original del botón
 function restablecerBotonAudio(botonEfecto) {
     botonEfecto.innerHTML = '<i class="fas fa-volume-up"></i> Escuchar texto';
     botonEfecto.style.backgroundColor = 'var(--verde-selva, #0B6623)';
 }
+
 // 10. MÓDULO CARRUSEL DE PUBLICIDAD Y ARRASTRE
 function habilitarArrastreLaptop(contenedor) {
     let isDown = false;
@@ -603,7 +618,6 @@ function habilitarArrastreLaptop(contenedor) {
     });
 }
 
-// 10. MÓDULO CARRUSEL DE PUBLICIDAD (CON DESPLAZAMIENTO AUTOMÁTICO)
 function inicializarCarrusel() {
     const contenedor = document.getElementById('carrusel-aliados');
     const contenedorDots = document.getElementById('carrusel-dots');
@@ -625,7 +639,7 @@ function inicializarCarrusel() {
                 <a href="https://wa.me/${comercio.whatsapp}?text=Hola,%20vi%20su%20anuncio%20en%20Nauta360" 
                    target="_blank" 
                    class="btn-whatsapp-comercio">
-                   📱 Contactar / Reservar
+                    📱 Contactar / Reservar
                 </a>
             </div>
         `;
@@ -638,13 +652,12 @@ function inicializarCarrusel() {
 
     habilitarArrastreLaptop(contenedor);
 
-    // Actualizar indicador de puntos según la posición
     contenedor.addEventListener('scroll', () => {
         const scrollPosition = contenedor.scrollLeft;
         const primeraTarjeta = contenedor.querySelector('.tarjeta-comercio');
         if (!primeraTarjeta) return;
 
-        const cardWidth = primeraTarjeta.offsetWidth + 12; // Ancho + gap
+        const cardWidth = primeraTarjeta.offsetWidth + 12;
         const indexActivo = Math.round(scrollPosition / cardWidth);
 
         const dots = contenedorDots.querySelectorAll('.dot');
@@ -657,26 +670,24 @@ function inicializarCarrusel() {
         });
     });
 
-    // --- LÓGICA DE DESPLAZAMIENTO AUTOMÁTICO ---
     let intervaloAutoScroll = null;
 
     function iniciarAutoScroll() {
-        if (intervaloAutoScroll) return; // Evitar múltiples intervalos
+        if (intervaloAutoScroll) return;
         
         intervaloAutoScroll = setInterval(() => {
             const primeraTarjeta = contenedor.querySelector('.tarjeta-comercio');
             if (!primeraTarjeta) return;
 
-            const cardWidth = primeraTarjeta.offsetWidth + 12; // Ancho + gap
+            const cardWidth = primeraTarjeta.offsetWidth + 12;
             const maxScroll = contenedor.scrollWidth - contenedor.clientWidth;
 
-            // Si llega al final del carrusel, vuelve al inicio
             if (contenedor.scrollLeft >= maxScroll - 5) {
                 contenedor.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
                 contenedor.scrollBy({ left: cardWidth, behavior: 'smooth' });
             }
-        }, 3500); // Se desplaza cada 3.5 segundos
+        }, 3500);
     }
 
     function detenerAutoScroll() {
@@ -684,10 +695,8 @@ function inicializarCarrusel() {
         intervaloAutoScroll = null;
     }
 
-    // Iniciar movimiento automático
     iniciarAutoScroll();
 
-    // Pausar al pasar el mouse o tocar para no molestar al usuario
     contenedor.addEventListener('mouseenter', detenerAutoScroll);
     contenedor.addEventListener('mouseleave', iniciarAutoScroll);
     contenedor.addEventListener('touchstart', detenerAutoScroll, { passive: true });
