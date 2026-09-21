@@ -14,7 +14,7 @@ const listaAliados = [
     {
         nombre: "Restaurante La Gran Concha",
         desc: "Platos tipicos a la carta",
-        whatsapp: "51900000000",
+        whatsapp: "51944882167",
         imagen: "https://lh3.googleusercontent.com/d/1HaryJJxoD_kdYg9SlV689BrYwU_dc9Od"
     },
     {
@@ -24,9 +24,9 @@ const listaAliados = [
         imagen: "https://lh3.googleusercontent.com/d/1SWo3FB328YbMkTRmNt_4UD9ceHhJ03MC"
     },
     {
-        nombre: "Hospedaje Nauta IN",
+        nombre: "Hospedaje Plaza INN",
         desc: "Habitaciones cómodas con A/C al frente de la plaza.",
-        whatsapp: "51900000000",
+        whatsapp: "51910210393",
         imagen: "https://lh3.googleusercontent.com/d/1XQK3WsAXLY40CqYOTie862lWs0pbVZOW"
     }
 ];
