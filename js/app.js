@@ -12,10 +12,10 @@ const RUTA_MONUMENTOS = ['plaza', 'ucamara', 'parroquia', 'sapi', 'bolognesi', '
 // Lista de aliados / comercios destacados para el carrusel
 const listaAliados = [
     {
-        nombre: "Restaurante El Mirador",
-        desc: "Platos típicos de la selva y pescados frescos frente al río.",
+        nombre: "Restaurante La Gran Concha",
+        desc: "Platos tipicos a la carta",
         whatsapp: "51900000000",
-        imagen: "https://lh3.googleusercontent.com/d/1tbEt7Gnxqd5bla0dm-fTqsLE6KZ-LTSj"
+        imagen: "https://drive.google.com/file/d/1HaryJJxoD_kdYg9SlV689BrYwU_dc9Od/view?usp=sharing"
     },
     {
         nombre: "Transportes Jaen",
