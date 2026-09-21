@@ -21,13 +21,13 @@ const listaAliados = [
         nombre: "Transportes Jaen",
         desc: "Modernos autos en la ruta Nauta - Iquitos.",
         whatsapp: "51900000000",
-        imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
+        imagen: "https://lh3.googleusercontent.com/d/1SWo3FB328YbMkTRmNt_4UD9ceHhJ03MC"
     },
     {
         nombre: "Hospedaje Nauta IN",
         desc: "Habitaciones cómodas con A/C al frente de la plaza.",
         whatsapp: "51900000000",
-        imagen: "https://lh3.googleusercontent.com/d/14wggFFfMMS912zT53ZI4Liz1bEIwXt-X"
+        imagen: "https://lh3.googleusercontent.com/d/1XQK3WsAXLY40CqYOTie862lWs0pbVZOW"
     }
 ];
 
