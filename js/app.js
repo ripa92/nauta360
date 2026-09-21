@@ -15,7 +15,7 @@ const listaAliados = [
         nombre: "Restaurante La Gran Concha",
         desc: "Platos tipicos a la carta",
         whatsapp: "51900000000",
-        imagen: "https://drive.google.com/file/d/1HaryJJxoD_kdYg9SlV689BrYwU_dc9Od/view?usp=sharing"
+        imagen: "https://https://lh3.googleusercontent.com/d/1HaryJJxoD_kdYg9SlV689BrYwU_dc9Od"
     },
     {
         nombre: "Transportes Jaen",
