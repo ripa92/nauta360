@@ -431,7 +431,7 @@ function actualizarVisualizacionPasaporte() {
         contenedor.appendChild(tarjetaSello);
     });
 
-    textoProgreso.innerText = `Has recolectado ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} sellos de la ruta de Nauta.`;
+    textoProgreso.innerText = `Has recorrido ${sellosObtenidos.length} de ${RUTA_MONUMENTOS.length} lugares de la ruta de Nauta.`;
 
     if (cajaPremio) {
         cajaPremio.style.display = (sellosObtenidos.length === RUTA_MONUMENTOS.length) ? "block" : "none";
